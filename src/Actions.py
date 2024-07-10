@@ -44,6 +44,7 @@ class Action:
 		elif self.__actionType == Action.FILE_COPY:
 			toFromPath = self.__data.split(" ")
 			if len(toFromPath) != 2:
+				print(toFromPath, self.__data)
 				return (False, "Requires to and from location")
 			elif not os.path.isfile(toFromPath[0]):
 				return (False, f"File to copy '{toFromPath[0]}' does not exist")
@@ -108,7 +109,14 @@ class Action:
 
 class ActionRow:
 	DATA_COLUMN_IDX=2
-	def __init__(self, idx : int, actionTypeComboBox : QComboBox, dataLine : DataLineWidget, commentLine : QLineEdit, needsSudoCheckBox : QCheckBox, selectedCheckBox : QCheckBox, parent : QTableWidget) -> None:
+	def __init__(self
+			  , idx : int
+			  , actionTypeComboBox : QComboBox
+			  , dataLine : DataLineWidget
+			  , commentLine : QLineEdit
+			  , needsSudoCheckBox : QCheckBox
+			  , selectedCheckBox : QCheckBox
+			  , parent : QTableWidget) -> None:
 		self.__idx = idx
 		self.__actionTypeComboBox = actionTypeComboBox
 		self.__dataLine = dataLine
@@ -122,9 +130,9 @@ class ActionRow:
 	def createAction(self) -> tuple:
 		action = Action(
 				self.__actionTypeComboBox.currentIndex()
-				, self.__dataLine.toDataLineString()
+				, self.__dataLine.toData()
 				, self.__commentLine.text()
-				, self.__needsSudoCheckBox.checked())
+				, self.__needsSudoCheckBox.isChecked())
 		valid, msg = action.validate()
 		if valid:
 			self.__action = action
@@ -137,8 +145,7 @@ class ActionRow:
 		return True
 
 	def delete(self):
-		# TODO
-		pass
+		self.__parent.removeRow(self.__idx)
 
 	def select(self, selected : bool = True):
 		self.__selectedCheckBox.setChecked(selected)
@@ -147,7 +154,7 @@ class ActionRow:
 		self.__selectedCheckBox.setChecked(not self.selected())
 
 	def selected(self) -> bool:
-		return self.__selectedCheckBox.checked()
+		return self.__selectedCheckBox.isChecked()
 
 	def asRow(self) -> str:
 		valid, msg = self.createAction()
@@ -178,6 +185,9 @@ class ActionRow:
 		newDataWidget.setupUi(w)
 		self.__dataLine = newDataWidget
 		self.__parent.setCellWidget(self.__idx, ActionRow.DATA_COLUMN_IDX, w)
+
+	def resetIndex(self, idx : int):
+		self.__idx = idx
 
 class ActionList:
 	def __init__(self, filename : str = None):
@@ -228,15 +238,19 @@ class ActionList:
 			a.select(False)
 
 	def deleteSelected(self):
-		for a in self.__actionList:
-			if a.selected():
-				# TODO
+		def actionFilter(a : ActionRow) -> bool:
+			kept = not a.selected()
+			if not kept:
 				a.delete()
-				pass
+			return kept
+		self.__actionList = list(filter(actionFilter, reversed(self.__actionList)))
+		# Reset actions' indexes
+		for i in range(len(self.__actionList)):
+			self.__actionList[i].resetIndex(i)
 
 	def save(self, filename):
 		with open(filename, 'w') as f:
-			f.writelines([a.asLine() for a in self.__actionList])
+			f.writelines([a.asRow() for a in self.__actionList])
 
 
 if __name__ == "__main__":

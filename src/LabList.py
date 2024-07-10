@@ -23,14 +23,16 @@ class LabComputer:
 		return f"{self.username}@{self.hostname if self.hostname is not None else self.ip}"
 
 	def asRow(self) -> str:
-		return f"{self.username},{self.ip if self.ip is not None else ""},{self.hostname if self.hostname is not None else ""}"
+		host = self.hostname if self.hostname is not None else ''
+		ip = self.ip if self.ip is not None else ''
+		return f"{self.username},{ip},{host}"
 
 class LabComputerRow:
 	def __init__(self
 			  , selectedBox : QCheckBox
-			  , unameBox : QTableWidgetItem
-			  , ipBox : QTableWidgetItem
-			  , hostBox : QTableWidgetItem) -> None:
+			  , unameBox : QLineEdit
+			  , ipBox : QLineEdit
+			  , hostBox : QLineEdit) -> None:
 		self.__selectedBox = selectedBox
 		self.__unameBox = unameBox
 		self.__ipBox = ipBox
@@ -43,7 +45,7 @@ class LabComputerRow:
 		return LabComputer(self.__unameBox.text(), self.__ipBox.text(), self.__hostBox.text())
 
 	def selected(self) -> bool:
-		return self.__selectedBox.checked()
+		return self.__selectedBox.isChecked()
 
 	def select(self, selected : bool = True):
 		self.__selectedBox.setChecked(selected)
@@ -66,11 +68,11 @@ class Lab:
 		with open(filename, 'r') as f:
 			for line in f:
 				uname, ip, host = [s.strip() for s in line.split(",")]
-				unameBox = QTableWidgetItem()
+				unameBox = QLineEdit()
 				unameBox.setText(uname)
-				ipBox = QTableWidgetItem()
+				ipBox = QLineEdit()
 				ipBox.setText(ip)
-				hostBox = QTableWidgetItem()
+				hostBox = QLineEdit()
 				hostBox.setText(host)
 				# The UI will have to use widgets() to add these to the table
 				self.__labComputerList.append(LabComputerRow(QCheckBox(), unameBox, ipBox, hostBox))
@@ -98,10 +100,13 @@ class Lab:
 			a.select(False)
 
 	def deleteSelected(self):
-		for a in self.__labComputerList:
-			if a.selected():
+		# TODO: this doesn't update the UI
+		def machineFilter(a : LabComputerRow) -> bool:
+			kept = not a.selected()
+			if not kept:
 				a.delete()
-				pass
+			return kept
+		self.__labComputerList = list(filter(machineFilter, reversed(self.__labComputerList)))
 
 	def toStrList(self) -> list:
 		return [str(l.asComputer()) for l in self.__labComputerList]

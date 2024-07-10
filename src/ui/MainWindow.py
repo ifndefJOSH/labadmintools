@@ -5,6 +5,8 @@ from PyQt5.QtCore import *  # type: ignore
 from PyQt5.QtGui import *  # type: ignore
 from PyQt5.QtWidgets import *  # type: ignore
 
+from Actions import *
+from LabList import *
 
 class MainWindow(object):
 	def setupUi(self, mainWindow):
@@ -51,8 +53,8 @@ class MainWindow(object):
 			icon3.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
 
 		self.actionExit.setIcon(icon3)
-		self.actionSave_Script = QAction(mainWindow)
-		self.actionSave_Script.setObjectName(u"actionSave_Script")
+		self.actionDelete_Action = QAction(mainWindow)
+		self.actionDelete_Action.setObjectName(u"actionDelete_Action")
 		icon4 = QIcon()
 		iconThemeName = u"delete"
 		if QIcon.hasThemeIcon(iconThemeName):
@@ -60,7 +62,7 @@ class MainWindow(object):
 		else:
 			icon4.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
 
-		self.actionSave_Script.setIcon(icon4)
+		self.actionDelete_Action.setIcon(icon4)
 		self.actionstdout_Logs = QAction(mainWindow)
 		self.actionstdout_Logs.setObjectName(u"actionstdout_Logs")
 		self.actionstdout_Logs.setCheckable(True)
@@ -112,14 +114,16 @@ class MainWindow(object):
 		self.verticalLayout_2 = QVBoxLayout(self.tab)
 		self.verticalLayout_2.setObjectName(u"verticalLayout_2")
 		self.machineListWidget = QTableWidget(self.tab)
-		if (self.machineListWidget.columnCount() < 3):
-			self.machineListWidget.setColumnCount(3)
+		if (self.machineListWidget.columnCount() < 4):
+			self.machineListWidget.setColumnCount(4)
 		__qtablewidgetitem = QTableWidgetItem()
-		self.machineListWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
+		self.machineListWidget.setHorizontalHeaderItem(1, __qtablewidgetitem)
 		__qtablewidgetitem1 = QTableWidgetItem()
-		self.machineListWidget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+		self.machineListWidget.setHorizontalHeaderItem(2, __qtablewidgetitem1)
 		__qtablewidgetitem2 = QTableWidgetItem()
-		self.machineListWidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
+		self.machineListWidget.setHorizontalHeaderItem(3, __qtablewidgetitem2)
+		__qtablewidgetitem8 = QTableWidgetItem()
+		self.machineListWidget.setHorizontalHeaderItem(0, __qtablewidgetitem8)
 		self.machineListWidget.setObjectName(u"machineListWidget")
 
 		self.verticalLayout_2.addWidget(self.machineListWidget)
@@ -387,7 +391,7 @@ class MainWindow(object):
 		self.menuLab.addSeparator()
 		self.menuLab.addAction(self.actionExit)
 		self.menuScript.addAction(self.menuAdd_Action.menuAction())
-		self.menuScript.addAction(self.actionSave_Script)
+		self.menuScript.addAction(self.actionDelete_Action)
 		self.menuScript.addSeparator()
 		self.menuScript.addAction(self.actionRun)
 		self.menuScript.addAction(self.actionRun_from_Selected_Action)
@@ -417,7 +421,7 @@ class MainWindow(object):
 		self.actionOpen_Lab_List.setText(QCoreApplication.translate("mainWindow", u"Open Lab List", None))
 		self.actionSave_Lab_List.setText(QCoreApplication.translate("mainWindow", u"Save Lab List", None))
 		self.actionExit.setText(QCoreApplication.translate("mainWindow", u"Exit", None))
-		self.actionSave_Script.setText(QCoreApplication.translate("mainWindow", u"Delete Action", None))
+		self.actionDelete_Action.setText(QCoreApplication.translate("mainWindow", u"Delete Action", None))
 		self.actionstdout_Logs.setText(QCoreApplication.translate("mainWindow", u"stdout Logs", None))
 		self.actionstderr_Logs.setText(QCoreApplication.translate("mainWindow", u"stderr Logs", None))
 		self.actionScript_Action.setText(QCoreApplication.translate("mainWindow", u"Script Action", None))
@@ -429,11 +433,13 @@ class MainWindow(object):
 		self.actionLoad_Action_List.setText(QCoreApplication.translate("mainWindow", u"Load Action List", None))
 		self.actionSave_Logs.setText(QCoreApplication.translate("mainWindow", u"Save Logs", None))
 		self.actionClear_Logs.setText(QCoreApplication.translate("mainWindow", u"Clear Logs", None))
-		___qtablewidgetitem = self.machineListWidget.horizontalHeaderItem(0)
+		___qtablewidgetitem8 = self.machineListWidget.horizontalHeaderItem(0)
+		___qtablewidgetitem8.setText(QCoreApplication.translate("mainWindow", u"Selected", None));
+		___qtablewidgetitem = self.machineListWidget.horizontalHeaderItem(1)
 		___qtablewidgetitem.setText(QCoreApplication.translate("mainWindow", u"Username", None));
-		___qtablewidgetitem1 = self.machineListWidget.horizontalHeaderItem(1)
+		___qtablewidgetitem1 = self.machineListWidget.horizontalHeaderItem(2)
 		___qtablewidgetitem1.setText(QCoreApplication.translate("mainWindow", u"IP Address", None));
-		___qtablewidgetitem2 = self.machineListWidget.horizontalHeaderItem(2)
+		___qtablewidgetitem2 = self.machineListWidget.horizontalHeaderItem(3)
 		___qtablewidgetitem2.setText(QCoreApplication.translate("mainWindow", u"Hostname", None));
 		self.addMachine.setText(QCoreApplication.translate("mainWindow", u"+", None))
 		self.deleteMachine.setText(QCoreApplication.translate("mainWindow", u"-", None))
@@ -473,6 +479,96 @@ class MainWindow(object):
 		self.menuAdd_Action.setTitle(QCoreApplication.translate("mainWindow", u"Add Action", None))
 		self.menuLogs.setTitle(QCoreApplication.translate("mainWindow", u"Logs", None))
 		self.menuShow_Logs.setTitle(QCoreApplication.translate("mainWindow", u"Show Logs", None))
+		self.setupSlots()
 	# retranslateUi
 
+	def addAction(self, actionType : int = Action.COMMAND):
+		assert(actionType >= 0 and actionType <= 2)
+		newIdx = self.actionListWidget.rowCount()
+		self.actionListWidget.insertRow(newIdx)
+		selected = QCheckBox()
+		actionTypeComboBox = QComboBox()
+		actionTypeComboBox.addItems(["Command", "File Copy", "Shell Script"])
+		actionTypeComboBox.setCurrentIndex(actionType)
+		dataLine = CommandWidget() if actionType == Action.COMMAND else \
+				FileCopyWidget() if actionType == Action.FILE_COPY else ShellScriptWidget()
+		dataLineWidget = QWidget()
+		dataLine.setupUi(dataLineWidget)
+		commentLine = QLineEdit()
+		needsSudo = QCheckBox()
+		ar = ActionRow(newIdx, actionTypeComboBox, dataLine, commentLine, needsSudo, selected, self.actionListWidget)
+		self.__actionList.addActionRow(ar)
+		# Add to UI
+		self.actionListWidget.setCellWidget(newIdx, 0, selected)
+		self.actionListWidget.setCellWidget(newIdx, 1, actionTypeComboBox)
+		self.actionListWidget.setCellWidget(newIdx, 2, dataLineWidget)
+		self.actionListWidget.setCellWidget(newIdx, 3, commentLine)
+		self.actionListWidget.setCellWidget(newIdx, 4, needsSudo)
 
+	def openActions(self):
+		filename = QFileDialog.getOpenFileName(None
+										, "Open Action List"
+										, os.getcwd()
+										, "Action List (*.labactions)")
+		if filename[0] == "":
+			return
+		self.__actionList = ActionList(filename[0])
+
+	def saveActions(self):
+		filename = QFileDialog.getSaveFileName(None
+										, "Save Action List"
+										, os.getcwd()
+										, "Action List (*.labactions)")
+		if filename[0] == "":
+			return
+		try:
+			self.__actionList.save(filename[0])
+		except Exception as e:
+			QMessageBox.critical(None, "Error Saving File", str(e))
+
+	def addLabMachine(self):
+		newIdx = self.machineListWidget.rowCount()
+		self.machineListWidget.insertRow(newIdx)
+
+		selected = QCheckBox()
+		unameBox = QLineEdit()
+		ipBox = QLineEdit()
+		hostBox = QLineEdit()
+		row = LabComputerRow(selected, unameBox, ipBox, hostBox)
+		self.machineListWidget.setCellWidget(newIdx, 0, selected)
+		self.machineListWidget.setCellWidget(newIdx, 1, unameBox)
+		self.machineListWidget.setCellWidget(newIdx, 2, ipBox)
+		self.machineListWidget.setCellWidget(newIdx, 3, hostBox)
+		self.__lab.addLabComputerRow(row)
+
+	def newLab(self):
+		self.__lab = Lab()
+		for row in range(self.machineListWidget.rowCount() - 1, -1, -1):
+			self.machineListWidget.removeRow(row)
+		self.machineListWidget.setRowCount(0)
+
+	def setupSlots(self):
+		# My 'Action' class is different then QAction. That is what is being referred to here
+		self.__actionList = ActionList()
+		self.__lab = Lab()
+
+		# Action editor stuff
+		self.newAction.clicked.connect(self.addAction)
+		self.actionCommand_Action.triggered.connect(self.addAction)
+		self.actionFile_Copy_Action.triggered.connect(lambda: self.addAction(Action.FILE_COPY))
+		self.actionScript_Action.triggered.connect(lambda: self.addAction(Action.SHELL_SCRIPT))
+		self.openActionList.clicked.connect(self.openActions)
+		self.actionLoad_Action_List.triggered.connect(self.openActions)
+		self.saveActionList.clicked.connect(self.saveActions)
+		self.actionSave_Action_List.triggered.connect(self.saveActions)
+		self.selectAllActions.clicked.connect(self.__actionList.selectAll)
+		self.selectInvertedActions.clicked.connect(self.__actionList.toggleSelected)
+		self.deselectAllActions.clicked.connect(self.__actionList.deselectAll)
+		self.actionDelete_Action.triggered.connect(self.__actionList.deleteSelected)
+
+		# Lab machine stuff
+		self.addMachine.clicked.connect(self.addLabMachine)
+		self.selectAllMachines.clicked.connect(self.__lab.selectAll)
+		self.invertMachineSelection.clicked.connect(self.__lab.toggleSelected)
+		self.deselectAllMachines.clicked.connect(self.__lab.deselectAll)
+		self.actionNew_Lab_List.triggered.connect(self.newLab)

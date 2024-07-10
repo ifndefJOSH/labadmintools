@@ -20,7 +20,8 @@ def tr(s : str) -> str:
 	return s
 
 class DataLineWidget(object):
-	def toDataLineString(self) -> str:
+	def toData(self) -> str:
+		print("Warning! You do not want to call this! You should have overridden this")
 		return ""
 
 class FileCopyWidget(DataLineWidget):
