@@ -204,16 +204,18 @@ class MainWindow(object):
 		self.verticalLayout_3 = QVBoxLayout(self.tab_2)
 		self.verticalLayout_3.setObjectName(u"verticalLayout_3")
 		self.actionListWidget = QTableWidget(self.tab_2)
-		if (self.actionListWidget.columnCount() < 4):
-			self.actionListWidget.setColumnCount(4)
+		if (self.actionListWidget.columnCount() < 5):
+			self.actionListWidget.setColumnCount(5)
+		__qtablewidgetitem7 = QTableWidgetItem()
+		self.actionListWidget.setHorizontalHeaderItem(0, __qtablewidgetitem7)
 		__qtablewidgetitem3 = QTableWidgetItem()
-		self.actionListWidget.setHorizontalHeaderItem(0, __qtablewidgetitem3)
+		self.actionListWidget.setHorizontalHeaderItem(1, __qtablewidgetitem3)
 		__qtablewidgetitem4 = QTableWidgetItem()
-		self.actionListWidget.setHorizontalHeaderItem(1, __qtablewidgetitem4)
+		self.actionListWidget.setHorizontalHeaderItem(2, __qtablewidgetitem4)
 		__qtablewidgetitem5 = QTableWidgetItem()
-		self.actionListWidget.setHorizontalHeaderItem(2, __qtablewidgetitem5)
+		self.actionListWidget.setHorizontalHeaderItem(3, __qtablewidgetitem5)
 		__qtablewidgetitem6 = QTableWidgetItem()
-		self.actionListWidget.setHorizontalHeaderItem(3, __qtablewidgetitem6)
+		self.actionListWidget.setHorizontalHeaderItem(4, __qtablewidgetitem6)
 		self.actionListWidget.setObjectName(u"actionListWidget")
 
 		self.verticalLayout_3.addWidget(self.actionListWidget)
@@ -439,13 +441,15 @@ class MainWindow(object):
 		self.invertMachineSelection.setText(QCoreApplication.translate("mainWindow", u"...", None))
 		self.deselectAllMachines.setText(QCoreApplication.translate("mainWindow", u"...", None))
 		self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("mainWindow", u"Lab Machines", None))
-		___qtablewidgetitem3 = self.actionListWidget.horizontalHeaderItem(0)
+		___qtablewidgetitem7 = self.actionListWidget.horizontalHeaderItem(0)
+		___qtablewidgetitem7.setText(QCoreApplication.translate("mainWindow", u"Selected", None));
+		___qtablewidgetitem3 = self.actionListWidget.horizontalHeaderItem(1)
 		___qtablewidgetitem3.setText(QCoreApplication.translate("mainWindow", u"Type", None));
-		___qtablewidgetitem4 = self.actionListWidget.horizontalHeaderItem(1)
+		___qtablewidgetitem4 = self.actionListWidget.horizontalHeaderItem(2)
 		___qtablewidgetitem4.setText(QCoreApplication.translate("mainWindow", u"Data", None));
-		___qtablewidgetitem5 = self.actionListWidget.horizontalHeaderItem(2)
+		___qtablewidgetitem5 = self.actionListWidget.horizontalHeaderItem(3)
 		___qtablewidgetitem5.setText(QCoreApplication.translate("mainWindow", u"Comment", None));
-		___qtablewidgetitem6 = self.actionListWidget.horizontalHeaderItem(3)
+		___qtablewidgetitem6 = self.actionListWidget.horizontalHeaderItem(4)
 		___qtablewidgetitem6.setText(QCoreApplication.translate("mainWindow", u"Privileged", None));
 		self.newAction.setText(QCoreApplication.translate("mainWindow", u"...", None))
 		self.openActionList.setText(QCoreApplication.translate("mainWindow", u"...", None))
