@@ -7,20 +7,9 @@ from PyQt5.QtWidgets import *  # type: ignore
 
 from LabList import LabComputer, Lab
 from ui.FileCopyWidget import CommandWidget, DataLineWidget, FileCopyWidget, ShellScriptWidget
+from Logs import *
 
 import fabric
-
-class Logs:
-	def __init__(self, stdout : str, stderr : str) -> None:
-		self.stdout = stdout
-		self.stderr = stderr
-
-	def append(self, stdout : str, stderr : str) -> None:
-		self.stdout += f"\n{stdout}"
-		self.stderr += f"\n{stderr}"
-
-	def __str__(self) -> str:
-		return f"STDOUT:\n{self.stdout}\nSTDERR:\n{self.stderr}"
 
 class Action:
 	# Types of actions
