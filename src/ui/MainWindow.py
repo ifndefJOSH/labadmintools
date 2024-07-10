@@ -87,8 +87,6 @@ class MainWindow(object):
 			icon5.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
 
 		self.actionRun.setIcon(icon5)
-		self.actionRun_from_Selected_Action = QAction(mainWindow)
-		self.actionRun_from_Selected_Action.setObjectName(u"actionRun_from_Selected_Action")
 		self.actionSave_Action_List = QAction(mainWindow)
 		self.actionSave_Action_List.setObjectName(u"actionSave_Action_List")
 		self.actionSave_Action_List.setIcon(icon2)
@@ -394,7 +392,6 @@ class MainWindow(object):
 		self.menuScript.addAction(self.actionDelete_Action)
 		self.menuScript.addSeparator()
 		self.menuScript.addAction(self.actionRun)
-		self.menuScript.addAction(self.actionRun_from_Selected_Action)
 		self.menuScript.addSeparator()
 		self.menuScript.addAction(self.actionSave_Action_List)
 		self.menuScript.addAction(self.actionLoad_Action_List)
@@ -428,7 +425,6 @@ class MainWindow(object):
 		self.actionCommand_Action.setText(QCoreApplication.translate("mainWindow", u"Command Action", None))
 		self.actionFile_Copy_Action.setText(QCoreApplication.translate("mainWindow", u"File Copy Action", None))
 		self.actionRun.setText(QCoreApplication.translate("mainWindow", u"Run", None))
-		self.actionRun_from_Selected_Action.setText(QCoreApplication.translate("mainWindow", u"Run Selected Action(s)", None))
 		self.actionSave_Action_List.setText(QCoreApplication.translate("mainWindow", u"Save Action List", None))
 		self.actionLoad_Action_List.setText(QCoreApplication.translate("mainWindow", u"Load Action List", None))
 		self.actionSave_Logs.setText(QCoreApplication.translate("mainWindow", u"Save Logs", None))
@@ -542,10 +538,55 @@ class MainWindow(object):
 		self.__lab.addLabComputerRow(row)
 
 	def newLab(self):
-		self.__lab = Lab()
-		for row in range(self.machineListWidget.rowCount() - 1, -1, -1):
-			self.machineListWidget.removeRow(row)
-		self.machineListWidget.setRowCount(0)
+		self.__lab.selectAll()
+		self.__lab.deleteSelected()
+
+	def runMyActions(self, justSelected : bool = False):
+		password, accept = QInputDialog.getText(None, "Password", "Password", QLineEdit.Password)
+		if not accept:
+			self.statusbar.showMessage("Aborted", 10000)
+			return
+		elif self.__lab.empty():
+			QMessageBox.critical(None, "No lab computers!", "No lab computers!")
+			self.statusbar.showMessage("Aborted. No lab computers", 10000)
+			return
+		elif self.__actionList.empty():
+			QMessageBox.critical(None, "No actions!", "No Actions!")
+			self.statusbar.showMessage("Aborted. No actions", 10000)
+			return
+		self.statusbar.showMessage("Started tasks...", 10000)
+		if justSelected:
+			self.__actionList.executeSelected(self.__lab, password)
+		else:
+			self.__actionList.executeAll(self.__lab, password)
+
+	def openLab(self):
+		filename = QFileDialog.getOpenFileName(None
+										, "Open Computer Lab List"
+										, os.getcwd()
+										, "Computer Lab List (*.computerlab)")
+		if filename[0] == "":
+			return
+		self.__lab = Lab(filename[0])
+		# This one we have to append widgets
+		for row in self.__lab.widgets():
+			selected, unameBox, ipBox, hostBox = row
+			newIdx = self.machineListWidget.rowCount()
+			self.machineListWidget.insertRow(newIdx)
+			self.machineListWidget.setCellWidget(newIdx, 0, selected)
+			self.machineListWidget.setCellWidget(newIdx, 1, unameBox)
+			self.machineListWidget.setCellWidget(newIdx, 2, ipBox)
+			self.machineListWidget.setCellWidget(newIdx, 3, hostBox)
+
+	def saveLab(self):
+		filename = QFileDialog.getSaveFileName(None
+										, "Open Computer Lab List"
+										, os.getcwd()
+										, "Computer Lab List (*.computerlab)")
+		if filename[0] == "":
+			return
+		self.__lab.save(filename[0])
+
 
 	def setupSlots(self):
 		# My 'Action' class is different then QAction. That is what is being referred to here
@@ -565,6 +606,7 @@ class MainWindow(object):
 		self.selectInvertedActions.clicked.connect(self.__actionList.toggleSelected)
 		self.deselectAllActions.clicked.connect(self.__actionList.deselectAll)
 		self.actionDelete_Action.triggered.connect(self.__actionList.deleteSelected)
+		self.actionRun.triggered.connect(self.runMyActions)
 
 		# Lab machine stuff
 		self.addMachine.clicked.connect(self.addLabMachine)
@@ -572,3 +614,5 @@ class MainWindow(object):
 		self.invertMachineSelection.clicked.connect(self.__lab.toggleSelected)
 		self.deselectAllMachines.clicked.connect(self.__lab.deselectAll)
 		self.actionNew_Lab_List.triggered.connect(self.newLab)
+		self.actionOpen_Lab_List.triggered.connect(self.openLab)
+		self.actionSave_Lab_List.triggered.connect(self.saveLab)

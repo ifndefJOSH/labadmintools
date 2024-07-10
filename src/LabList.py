@@ -25,7 +25,7 @@ class LabComputer:
 	def asRow(self) -> str:
 		host = self.hostname if self.hostname is not None else ''
 		ip = self.ip if self.ip is not None else ''
-		return f"{self.username},{ip},{host}"
+		return f"{self.username},{ip},{host}\n"
 
 class LabComputerRow:
 	def __init__(self
@@ -76,10 +76,11 @@ class Lab:
 				hostBox.setText(host)
 				# The UI will have to use widgets() to add these to the table
 				self.__labComputerList.append(LabComputerRow(QCheckBox(), unameBox, ipBox, hostBox))
+		print(f"Loaded lab with {len(self.__labComputerList)} computers")
 
 	def save(self, filename):
 		with open(filename, 'w') as f:
-			f.writelines([c.asLine() for c in self.__labComputerList])
+			f.writelines([c.asRow() for c in self.__labComputerList])
 
 	def addLabComputerRow(self, labComputerRow : LabComputerRow):
 		self.__labComputerList.append(labComputerRow)
@@ -108,8 +109,12 @@ class Lab:
 			return kept
 		self.__labComputerList = list(filter(machineFilter, reversed(self.__labComputerList)))
 
-	def toStrList(self) -> list:
-		return [str(l.asComputer()) for l in self.__labComputerList]
+	def toStrList(self, onlySelected : bool=False) -> list:
+		return [str(l.asComputer()) for l in filter(lambda l : not onlySelected or l.selected() \
+				, self.__labComputerList)]
+
+	def empty(self) -> bool:
+		return len(self.__labComputerList) == 0
 
 
 

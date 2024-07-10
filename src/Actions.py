@@ -23,9 +23,20 @@ class Logs:
 		return f"STDOUT:\n{self.stdout}\nSTDERR:\n{self.stderr}"
 
 class Action:
+	# Types of actions
 	COMMAND=0
 	FILE_COPY=1
 	SHELL_SCRIPT=2
+
+	# Statuses for actions
+	NOT_STARTED=0
+	RUNNING=1
+	SUCCEEDED=2
+	FAILED=3
+
+	@staticmethod
+	def statusToString(status : int):
+		return ["Not Started", "Running", "Succeeded", "Failed"][status]
 
 	def __init__(self, actionType : int, data : str, comment : str, needsSudo : bool) -> None:
 		self.__actionType = actionType
@@ -34,6 +45,7 @@ class Action:
 		self.__needsSudo = needsSudo
 		self.__executed = False
 		self.__logs = None
+		self.__status = Action.NOT_STARTED
 
 	def validate(self) -> tuple:
 		'''
@@ -57,6 +69,9 @@ class Action:
 		else:
 			return (False, "Action Type is Invalid")
 
+	def status(self) -> int:
+		return self.__status
+
 	def execute(self, connectionGroup : fabric.group.ThreadingGroup) -> None:
 		valid, msg = self.validate()
 		if not valid:
@@ -66,7 +81,10 @@ class Action:
 			print(f"Warning: this action was already executed")
 
 		# Run the bad boi
+		result : fabric.Result = None
+		self.__status = Action.RUNNING
 		if self.__actionType == Action.COMMAND:
+			print(f"Running command `{self.__data}` on group")
 			# privilege escalation
 			if self.__needsSudo:
 				result = connectionGroup.sudo(self.__data, hide=True)
@@ -76,25 +94,30 @@ class Action:
 		elif self.__actionType == Action.FILE_COPY:
 			# TODO: do we need any form of sudo?
 			source, destination = [s.strip() for s in self.__data.split(" ")]
-			connectionGroup.put(source, remote=destination)
+			print(f"Copying file `{source}` to group at path {destination}")
+			result = connectionGroup.put(source, remote=destination)
 		elif self.__actionType == Action.SHELL_SCRIPT:
 			SHELL_PATH="/tmp/tempShellScriptLabAdmin"
 			# First, copy the file to /tmp/tempShellScript
-			connectionGroup.put(self.__data, remote=SHELL_PATH)
-			# second, execute the file
-			if self.__needsSudo:
-				result = connectionGroup.sudo(SHELL_PATH)
-			else:
-				result = connectionGroup.run(SHELL_PATH)
-			self.__logs = Logs(result.stdout, result.stderr)
-			# delete the file
-			connectionGroup.run(f"rm {SHELL_PATH}")
+			print(f"Attempting to copy shell script `{self.__data}` to group...", end="")
+			result = connectionGroup.put(self.__data, remote=SHELL_PATH)
+			if result.ok:
+				print("ok. Now running script.")
+				# second, execute the file, overwriting 'result' variable
+				if self.__needsSudo:
+					result = connectionGroup.sudo(SHELL_PATH)
+				else:
+					result = connectionGroup.run(SHELL_PATH)
+				self.__logs = Logs(result.stdout, result.stderr)
+				# delete the file
+				connectionGroup.run(f"rm {SHELL_PATH}")
 
-
+		self.__status = Action.SUCCEEDED if result.ok else Action.FAILED
+		print(f"{'Succeeded' if result.ok else 'Failed'}")
 		self.__executed = True
 
 	def asRow(self) -> str:
-		return f"{self.__actionType},{self.__data},{self.__comment},{self.__needsSudo}"
+		return f"{self.__actionType},{self.__data},{self.__comment},{self.__needsSudo}\n"
 
 	def getLogs(self, stderr : bool = True, stdout : bool = True) -> str:
 		assert(stderr or stdout)
@@ -143,6 +166,12 @@ class ActionRow:
 			return False
 		self.__action.execute(connectionGroup)
 		return True
+
+	def status(self) -> int:
+		if self.__action is None:
+			return Action.NOT_STARTED
+		else:
+			return self.__action.status()
 
 	def delete(self):
 		self.__parent.removeRow(self.__idx)
@@ -210,17 +239,21 @@ class ActionList:
 	def addActionRow(self, actionRow : ActionRow):
 		self.__actionList.append(actionRow)
 
-	def executeAll(self, lab : Lab, passwd : str):
+	def executeAll(self, lab : Lab, passwd : str, selectedMachinesOnly : bool = False):
+		print("Attempting to execute actions on all machines")
 		# Create one threading group that executes all actions concurrently
 		config = fabric.Config(overrides={'sudo': {'password': passwd}})
-		connectionGroup = fabric.group.ThreadingGroup(lab.toStrList(), config=config)
+		connectionGroup = fabric.group.ThreadingGroup(' '.join(lab.toStrList(selectedMachinesOnly))
+												, config=config)
 		for a in self.__actionList:
 			a.executeAction(connectionGroup)
 
-	def executeSelected(self, lab : Lab, passwd : str):
+	def executeSelected(self, lab : Lab, passwd : str, selectedMachinesOnly : bool = False):
+		print("Attempting to execute actions just on selected machines")
 		# Create one threading group that executes all actions concurrently
 		config = fabric.Config(overrides={'sudo': {'password': passwd}})
-		connectionGroup = fabric.group.ThreadingGroup(lab.toStrList(), config=config)
+		connectionGroup = fabric.group.ThreadingGroup(' '.join(lab.toStrList(selectedMachinesOnly))
+												, config=config)
 		for a in self.__actionList:
 			if a.selected():
 				a.executeAction(connectionGroup)
@@ -251,6 +284,9 @@ class ActionList:
 	def save(self, filename):
 		with open(filename, 'w') as f:
 			f.writelines([a.asRow() for a in self.__actionList])
+
+	def empty(self) -> bool:
+		return len(self.__actionList) == 0
 
 
 if __name__ == "__main__":
