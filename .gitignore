@@ -1,2 +1,4 @@
 __pycache__
 *.ui
+build
+dist
