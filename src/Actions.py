@@ -219,6 +219,7 @@ class ActionRow:
 		return self.__action.asRow()
 
 	def statusMessage(self) -> str:
+		self.createAction()
 		if self.__action is None:
 			return ""
 		return self.__action.statusMessage()
@@ -247,10 +248,13 @@ class ActionRow:
 	def resetIndex(self, idx : int):
 		self.__idx = idx
 
-class ActionList:
+class ActionList(QObject):
+	finished = pyqtSignal()
+	progress = pyqtSignal(int)
+	progressMessage = pyqtSignal(str)
 	def __init__(self, filename : str = None):
+		super().__init__(None)
 		self.__actionList = []
-		self.setProgressWidgets()
 		if filename is None:
 			return
 		with open(filename, 'r') as f:
@@ -277,20 +281,14 @@ class ActionList:
 		connectionGroup = fabric.group.ThreadingGroup(*hosts
 									, config=config
 									, connect_kwargs={"password":passwd})
-		if self.__progressBar is not None:
-			self.__progressBar.setVisible(True)
-			self.__progressBar.setRange(0, len(self.__actionList))
-
 		completed = 0
 		for a in self.__actionList:
+			self.progressMessage.emit(f"Running `{a.statusMessage()}`")
 			a.executeAction(connectionGroup)
-			if self.__statusBar is not None:
-				self.__statusBar.showMessage(a.statusMessage())
 			completed += 1
-			if self.__progressBar is not None:
-				self.__progressBar.setValue(completed)
-		if self.__progressBar is not None:
-			self.__progressBar.setVisible(False)
+			self.progress.emit(completed)
+
+		self.finished.emit()
 
 	def executeSelected(self, lab : Lab, passwd : str, selectedMachinesOnly : bool = False):
 		print("Attempting to execute actions just on selected machines")
@@ -300,27 +298,20 @@ class ActionList:
 		connectionGroup = fabric.group.ThreadingGroup(*hosts
 									, config=config
 									, connect_kwargs={"password":passwd})
-		if self.__progressBar is not None:
-			cnt = 0
-			for a in self.__actionList:
-				if a.selected():
-					cnt += 1
-			self.__progressBar.setRange(0, cnt)
-			self.__progressBar.setVisible(True)
-
 		completed = 0
 		for a in self.__actionList:
 			if a.selected():
+				self.progressMessage.emit(f"Running `{a.statusMessage()}`")
 				a.executeAction(connectionGroup)
-				if self.__statusBar is not None:
-					self.__statusBar.showMessage(a.statusMessage())
 				completed += 1
-				if self.__progressBar is not None:
-					self.__progressBar.setValue(completed)
+				self.progress.emit(completed)
+		self.finished.emit()
 
-		print(self.allLogs())
-		if self.__progressBar is not None:
-			self.__progressBar.setVisible(False)
+	def selectedActionCount(self) -> int:
+		return len(filter(lambda a: a.selected(), self.__actionList))
+
+	def actionCount(self) -> int:
+		return len(self.__actionList)
 
 	def selectAll(self):
 		for a in self.__actionList:
@@ -354,10 +345,6 @@ class ActionList:
 
 	def allLogs(self) -> list:
 		return [a.getLogs() for a in self.__actionList]
-
-	def setProgressWidgets(self, progressBar : QProgressBar | None = None, statusBar : QStatusBar | None = None):
-		self.__progressBar = progressBar
-		self.__statusBar = statusBar
 
 if __name__ == "__main__":
 	print("Cannot run this file!")

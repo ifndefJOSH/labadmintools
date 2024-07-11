@@ -34,6 +34,7 @@ class MainWindow(object):
 	def setupUi(self, mainWindow):
 		if not mainWindow.objectName():
 			mainWindow.setObjectName(u"mainWindow")
+		self.__mainWindow = mainWindow
 		mainWindow.resize(800, 639)
 		self.actionNew_Lab_List = QAction(mainWindow)
 		self.actionNew_Lab_List.setObjectName(u"actionNew_Lab_List")
@@ -573,7 +574,10 @@ class MainWindow(object):
 		self.__lab.deleteSelected()
 
 	def runMyActions(self, justSelected : bool = False):
-		self.__actionList.setProgressWidgets(self.progressBar, self.statusbar)
+		self.__workerThread = QThread()
+		self.__actionList.moveToThread(self.__workerThread)
+
+
 		password, accept = QInputDialog.getText(None, "Password", "Password", QLineEdit.Password)
 		if not accept:
 			self.statusbar.showMessage("Aborted", 10000)
@@ -587,21 +591,25 @@ class MainWindow(object):
 			self.statusbar.showMessage("Aborted. No actions", 10000)
 			return
 		self.statusbar.showMessage("Started tasks...", 10000)
-		def run():
+		self.progressBar.setValue(0)
+		self.progressBar.setVisible(True)
+		self.__actionList.moveToThread(self.__workerThread)
+		def start():
 			try:
 				if justSelected:
+					self.progressBar.setRange(0, self.__actionList.selectedActionCount())
 					self.__actionList.executeSelected(self.__lab, password)
 				else:
+					self.progressBar.setRange(0, self.__actionList.actionCount())
 					self.__actionList.executeAll(self.__lab, password)
 			except Exception as e:
 				QMessageBox.critical(None, "Could not execute actions!", str(e))
-			self.__allLogs.append(LogTree(
-				self.logTree
-				, self.__actionList.allLogs()
-				, self.logViewer))
-			self.tabWidget.setCurrentIndex(2)
-		worker = Thread(target=run)
-		worker.start()
+				self.__workerThread.exit(1)
+		self.__workerThread.started.connect(start)
+		self.__workerThread.start()
+		# Threading is buggy
+		#worker = Thread(target=run)
+		#worker.start()
 
 
 	def openLab(self):
@@ -649,6 +657,7 @@ class MainWindow(object):
 		self.__actionList = ActionList()
 		self.__lab = Lab()
 		self.__allLogs = []
+		self.__mainThread = self.__mainWindow.thread()
 
 		# Action editor stuff
 		self.newAction.clicked.connect(self.addAction)
@@ -679,3 +688,20 @@ class MainWindow(object):
 		# Log stuff
 		self.saveLogs.clicked.connect(self.saveMyLogs)
 		self.actionSave_Logs.triggered.connect(self.saveMyLogs)
+
+		# Running Actions
+		self.__actionList.progress.connect(lambda i : self.progressBar.setValue(i))
+		self.__actionList.progressMessage.connect(lambda msg : self.statusbar.showMessage(msg))
+		def finished():
+			self.__allLogs.append(LogTree(
+				self.logTree
+				, self.__actionList.allLogs()
+				, self.logViewer))
+			self.tabWidget.setCurrentIndex(2)
+			self.progressBar.setVisible(False)
+			self.__workerThread.started.disconnect()
+			self.__workerThread.quit()
+			self.__actionList.moveToThread(self.__mainThread)
+			self.statusbar.showMessage("Finished.")
+		self.__actionList.finished.connect(finished)
+
