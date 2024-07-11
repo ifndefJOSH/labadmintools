@@ -55,7 +55,8 @@ class LabComputerRow:
 	def toggleSelection(self):
 		self.__selectedBox.setChecked(not self.selected())
 
-	def setDelCallback(self, callback : FunctionType) -> None:
+	def setDelCallback(self, callback : FunctionType, idx : int) -> None:
+		self.idx = idx
 		self.__delCallback = callback
 
 	def delete(self):
@@ -68,6 +69,7 @@ class Lab:
 	def __init__(self, filename : str = None):
 		self.__labComputerList = []
 		self.__filename = filename
+		self.__uiWidget = None
 		if filename is None:
 			return
 		with open(filename, 'r') as f:
@@ -96,10 +98,15 @@ class Lab:
 	def widgets(self) -> list:
 		return [l.widgets() for l in self.__labComputerList]
 
-	def setupCallbacks(self, uiWidget : QTableWidget):
+	def setupCallbacks(self, uiWidget : QTableWidget | None = None):
+		if uiWidget is None:
+			uiWidget = self.__uiWidget
+		else:
+			self.__uiWidget = uiWidget
+		assert(uiWidget is not None)
 		for i in range(len(self.__labComputerList)):
 			computer = self.__labComputerList[i]
-			computer.setDelCallback(lambda : uiWidget.removeRow(i))
+			computer.setDelCallback(lambda : uiWidget.removeRow(computer.idx), i)
 
 	def selectAll(self):
 		for a in self.__labComputerList:
@@ -115,12 +122,23 @@ class Lab:
 
 	def deleteSelected(self):
 		# TODO: this doesn't update the UI
-		def machineFilter(a : LabComputerRow) -> bool:
-			kept = not a.selected()
-			if not kept:
-				a.delete()
-			return kept
-		self.__labComputerList = list(filter(machineFilter, reversed(self.__labComputerList)))
+		i = 0
+		for comp in self.__labComputerList:
+			if comp.selected():
+				comp.delete()
+				del self.__labComputerList[i]
+				for j in range(i, len(self.__labComputerList)):
+					self.__labComputerList[i].idx = j
+			else:
+				i += 1
+		# def machineFilter(a : LabComputerRow) -> bool:
+		# 	kept = not a.selected()
+		# 	if not kept:
+		# 		a.delete()
+		# 	return kept
+		# self.__labComputerList = list(filter(machineFilter, reversed(self.__labComputerList)))
+
+		print(self.__labComputerList)
 
 	def toStrList(self, onlySelected : bool=False) -> list:
 		return [str(l.asComputer()) for l in filter(lambda l : not onlySelected or l.selected() \

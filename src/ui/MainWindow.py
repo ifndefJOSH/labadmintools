@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from threading import Thread
 from PyQt5 import *
 from PyQt5.QtCore import *  # type: ignore
 from PyQt5.QtGui import *  # type: ignore
@@ -7,6 +8,7 @@ from PyQt5.QtWidgets import *  # type: ignore
 
 from Actions import *
 from LabList import *
+from Logs import *
 
 class MainWindow(object):
 	def setupUi(self, mainWindow):
@@ -346,6 +348,8 @@ class MainWindow(object):
 		self.logViewer = QTextEdit(self.tab_3)
 		self.logViewer.setObjectName(u"logViewer")
 		self.logViewer.setReadOnly(True)
+		monoFont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+		self.logViewer.setFont(monoFont)
 
 		self.horizontalLayout_3.addWidget(self.logViewer)
 
@@ -403,6 +407,11 @@ class MainWindow(object):
 		self.menuLogs.addAction(self.actionClear_Logs)
 		self.menuShow_Logs.addAction(self.actionstdout_Logs)
 		self.menuShow_Logs.addAction(self.actionstderr_Logs)
+
+		self.progressBar = QProgressBar()
+		self.progressBar.setRange(0, 0)
+		self.progressBar.setVisible(False)
+		self.statusbar.addPermanentWidget(self.progressBar)
 
 		self.retranslateUi(mainWindow)
 
@@ -462,8 +471,8 @@ class MainWindow(object):
 		self.runActions.setText(QCoreApplication.translate("mainWindow", u"Run Action List", None))
 		self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("mainWindow", u"Actions", None))
 		___qtreewidgetitem = self.logTree.headerItem()
-		___qtreewidgetitem.setText(2, QCoreApplication.translate("mainWindow", u"stdout Logs", None));
-		___qtreewidgetitem.setText(1, QCoreApplication.translate("mainWindow", u"stderr Logs", None));
+		___qtreewidgetitem.setText(2, QCoreApplication.translate("mainWindow", u"Return Code", None));
+		___qtreewidgetitem.setText(1, QCoreApplication.translate("mainWindow", u"Status", None));
 		___qtreewidgetitem.setText(0, QCoreApplication.translate("mainWindow", u"Computer and Actions", None));
 		self.selectAllMachineLogs.setText(QCoreApplication.translate("mainWindow", u"...", None))
 		self.invertMachineLogSelection.setText(QCoreApplication.translate("mainWindow", u"...", None))
@@ -509,6 +518,7 @@ class MainWindow(object):
 		if filename[0] == "":
 			return
 		self.__actionList = ActionList(filename[0])
+		self.tabWidget.setCurrentIndex(1)
 
 	def saveActions(self):
 		filename = QFileDialog.getSaveFileName(None
@@ -543,6 +553,7 @@ class MainWindow(object):
 		self.__lab.deleteSelected()
 
 	def runMyActions(self, justSelected : bool = False):
+		self.__actionList.setProgressWidgets(self.progressBar, self.statusbar)
 		password, accept = QInputDialog.getText(None, "Password", "Password", QLineEdit.Password)
 		if not accept:
 			self.statusbar.showMessage("Aborted", 10000)
@@ -556,13 +567,22 @@ class MainWindow(object):
 			self.statusbar.showMessage("Aborted. No actions", 10000)
 			return
 		self.statusbar.showMessage("Started tasks...", 10000)
-		try:
-			if justSelected:
-				self.__actionList.executeSelected(self.__lab, password)
-			else:
-				self.__actionList.executeAll(self.__lab, password)
-		except Exception as e:
-			QMessageBox.critical(None, "Could not execute actions!", str(e))
+		def run():
+			try:
+				if justSelected:
+					self.__actionList.executeSelected(self.__lab, password)
+				else:
+					self.__actionList.executeAll(self.__lab, password)
+			except Exception as e:
+				QMessageBox.critical(None, "Could not execute actions!", str(e))
+			self.__allLogs.append(LogTree(
+				self.logTree
+				, self.__actionList.allLogs()
+				, self.logViewer))
+			self.tabWidget.setCurrentIndex(2)
+		worker = Thread(target=run)
+		worker.start()
+
 
 	def openLab(self):
 		filename = QFileDialog.getOpenFileName(None
@@ -571,6 +591,7 @@ class MainWindow(object):
 										, "Computer Lab List (*.computerlab)")
 		if filename[0] == "":
 			return
+		self.newLab()
 		self.__lab = Lab(filename[0])
 		self.__lab.setupCallbacks(self.machineListWidget)
 		# This one we have to append widgets
@@ -583,6 +604,7 @@ class MainWindow(object):
 			self.machineListWidget.setCellWidget(newIdx, 2, ipBox)
 			self.machineListWidget.setCellWidget(newIdx, 3, hostBox)
 		self.statusbar.showMessage(f"Opened lab list from f{filename[0]}")
+		self.tabWidget.setCurrentIndex(0)
 
 	def saveLab(self):
 		filename = QFileDialog.getSaveFileName(None
@@ -594,11 +616,19 @@ class MainWindow(object):
 		self.__lab.save(filename[0])
 		self.statusbar.showMessage(f"Saved lab list to f{filename[0]}")
 
+	def saveMyLogs(self):
+		foldername = QFileDialog.getExistingDirectory(None
+											, "Folder to save logs to"
+											, os.getcwd())
+		for lt in self.__allLogs:
+			lt.saveLogs(foldername)
+
 
 	def setupSlots(self):
 		# My 'Action' class is different then QAction. That is what is being referred to here
 		self.__actionList = ActionList()
 		self.__lab = Lab()
+		self.__allLogs = []
 
 		# Action editor stuff
 		self.newAction.clicked.connect(self.addAction)
@@ -614,6 +644,7 @@ class MainWindow(object):
 		self.deselectAllActions.clicked.connect(self.__actionList.deselectAll)
 		self.actionDelete_Action.triggered.connect(self.__actionList.deleteSelected)
 		self.actionRun.triggered.connect(self.runMyActions)
+		self.runActions.clicked.connect(self.runMyActions)
 
 		# Lab machine stuff
 		self.addMachine.clicked.connect(self.addLabMachine)
@@ -624,3 +655,7 @@ class MainWindow(object):
 		self.actionNew_Lab_List.triggered.connect(self.newLab)
 		self.actionOpen_Lab_List.triggered.connect(self.openLab)
 		self.actionSave_Lab_List.triggered.connect(self.saveLab)
+
+		# Log stuff
+		self.saveLogs.clicked.connect(self.saveMyLogs)
+		self.actionSave_Logs.triggered.connect(self.saveMyLogs)
