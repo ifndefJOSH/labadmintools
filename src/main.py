@@ -16,4 +16,4 @@ if __name__ == "__main__":
 	mw.setupUi(mww)
 
 	mww.show()
-	exit(app.exec())
+	sys.exit(app.exec())
