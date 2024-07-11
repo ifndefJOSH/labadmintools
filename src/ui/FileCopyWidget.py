@@ -151,6 +151,9 @@ class CommandWidget(DataLineWidget):
 		self.commandBox.setPlaceholderText(QCoreApplication.translate("Form", u"Command", None))
 	# retranslateUi
 
+	def toData(self) -> str:
+		return self.commandBox.text()
+
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
 	window = QWidget()

@@ -1,4 +1,6 @@
 
+from types import FunctionType
+
 from PyQt5 import *
 from PyQt5.QtCore import *  # type: ignore
 from PyQt5.QtGui import *  # type: ignore
@@ -53,9 +55,11 @@ class LabComputerRow:
 	def toggleSelection(self):
 		self.__selectedBox.setChecked(not self.selected())
 
+	def setDelCallback(self, callback : FunctionType) -> None:
+		self.__delCallback = callback
+
 	def delete(self):
-		# TODO
-		pass
+		self.__delCallback()
 
 	def asRow(self) -> str:
 		return self.asComputer().asRow()
@@ -63,6 +67,7 @@ class LabComputerRow:
 class Lab:
 	def __init__(self, filename : str = None):
 		self.__labComputerList = []
+		self.__filename = filename
 		if filename is None:
 			return
 		with open(filename, 'r') as f:
@@ -78,7 +83,10 @@ class Lab:
 				self.__labComputerList.append(LabComputerRow(QCheckBox(), unameBox, ipBox, hostBox))
 		print(f"Loaded lab with {len(self.__labComputerList)} computers")
 
-	def save(self, filename):
+	def save(self, filename : str = None):
+		if filename is None:
+			filename = self.__filename
+		assert(filename is not None)
 		with open(filename, 'w') as f:
 			f.writelines([c.asRow() for c in self.__labComputerList])
 
@@ -87,6 +95,11 @@ class Lab:
 
 	def widgets(self) -> list:
 		return [l.widgets() for l in self.__labComputerList]
+
+	def setupCallbacks(self, uiWidget : QTableWidget):
+		for i in range(len(self.__labComputerList)):
+			computer = self.__labComputerList[i]
+			computer.setDelCallback(lambda : uiWidget.removeRow(i))
 
 	def selectAll(self):
 		for a in self.__labComputerList:

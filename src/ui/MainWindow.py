@@ -535,6 +535,7 @@ class MainWindow(object):
 		self.machineListWidget.setCellWidget(newIdx, 1, unameBox)
 		self.machineListWidget.setCellWidget(newIdx, 2, ipBox)
 		self.machineListWidget.setCellWidget(newIdx, 3, hostBox)
+		row.setDelCallback(lambda : self.machineListWidget.removeRow(newIdx))
 		self.__lab.addLabComputerRow(row)
 
 	def newLab(self):
@@ -555,10 +556,13 @@ class MainWindow(object):
 			self.statusbar.showMessage("Aborted. No actions", 10000)
 			return
 		self.statusbar.showMessage("Started tasks...", 10000)
-		if justSelected:
-			self.__actionList.executeSelected(self.__lab, password)
-		else:
-			self.__actionList.executeAll(self.__lab, password)
+		try:
+			if justSelected:
+				self.__actionList.executeSelected(self.__lab, password)
+			else:
+				self.__actionList.executeAll(self.__lab, password)
+		except Exception as e:
+			QMessageBox.critical(None, "Could not execute actions!", str(e))
 
 	def openLab(self):
 		filename = QFileDialog.getOpenFileName(None
@@ -568,6 +572,7 @@ class MainWindow(object):
 		if filename[0] == "":
 			return
 		self.__lab = Lab(filename[0])
+		self.__lab.setupCallbacks(self.machineListWidget)
 		# This one we have to append widgets
 		for row in self.__lab.widgets():
 			selected, unameBox, ipBox, hostBox = row
@@ -577,6 +582,7 @@ class MainWindow(object):
 			self.machineListWidget.setCellWidget(newIdx, 1, unameBox)
 			self.machineListWidget.setCellWidget(newIdx, 2, ipBox)
 			self.machineListWidget.setCellWidget(newIdx, 3, hostBox)
+		self.statusbar.showMessage(f"Opened lab list from f{filename[0]}")
 
 	def saveLab(self):
 		filename = QFileDialog.getSaveFileName(None
@@ -586,6 +592,7 @@ class MainWindow(object):
 		if filename[0] == "":
 			return
 		self.__lab.save(filename[0])
+		self.statusbar.showMessage(f"Saved lab list to f{filename[0]}")
 
 
 	def setupSlots(self):
@@ -613,6 +620,7 @@ class MainWindow(object):
 		self.selectAllMachines.clicked.connect(self.__lab.selectAll)
 		self.invertMachineSelection.clicked.connect(self.__lab.toggleSelected)
 		self.deselectAllMachines.clicked.connect(self.__lab.deselectAll)
+		self.deleteMachine.clicked.connect(lambda : (self.__lab.deleteSelected(), self.__lab.setupCallbacks(self.machineListWidget)))
 		self.actionNew_Lab_List.triggered.connect(self.newLab)
 		self.actionOpen_Lab_List.triggered.connect(self.openLab)
 		self.actionSave_Lab_List.triggered.connect(self.saveLab)
