@@ -25,7 +25,8 @@ from threading import Thread
 from PyQt5 import *
 from PyQt5.QtCore import *  # type: ignore
 from PyQt5.QtGui import *  # type: ignore
-from PyQt5.QtWidgets import *  # type: ignore
+from PyQt5.QtWidgets import *
+from invoke.terminals import select  # type: ignore
 
 from Actions import *
 from LabList import *
@@ -664,6 +665,19 @@ class MainWindow(object):
 			lt.saveLogs(foldername)
 		self.statusbar.showMessage(f"Saved results to {foldername}")
 
+	def logSelection(self, toggle : bool = False, deselectAll : bool = False):
+		def selectItem(item : QTreeWidgetItem):
+			item.setSelected((not toggle or not item.isSelected()) and not deselectAll)
+			for i in range(item.childCount()):
+				selectItem(item.child(i))
+		selectItem(self.logTree.invisibleRootItem())
+
+	def deleteLogSelection(self):
+		for w in self.logTree.selectedItems():
+			if w is None:
+				break
+			w.parent().removeChild(w)
+
 
 	def setupSlots(self):
 		# My 'Action' class is different then QAction. That is what is being referred to here
@@ -706,6 +720,11 @@ class MainWindow(object):
 		# Log stuff
 		self.saveLogs.clicked.connect(self.saveMyLogs)
 		self.actionSave_Logs.triggered.connect(self.saveMyLogs)
+		self.selectAllMachineLogs.clicked.connect(self.logSelection)
+		self.invertMachineLogSelection.clicked.connect(lambda : self.logSelection(True))
+		self.deselectAllMachineLogs.clicked.connect(lambda : self.logSelection(deselectAll=True))
+		self.actionClear_Logs.triggered.connect(self.logTree.clear)
+		self.deleteSelectedLogs.clicked.connect(self.deleteLogSelection)
 
 		# Running Actions
 		self.__actionList.progress.connect(lambda i : self.progressBar.setValue(i))
