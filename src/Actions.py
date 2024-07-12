@@ -162,8 +162,11 @@ class ActionRow:
 			  , parent : QTableWidget) -> None:
 		self.__idx = idx
 		self.__actionTypeComboBox = actionTypeComboBox
+		actionTypeComboBox.setFrame(False)
 		self.__dataLine = dataLine
 		self.__commentLine = commentLine
+		commentLine.setFrame(False)
+		commentLine.setPlaceholderText("Comment...")
 		self.__needsSudoCheckBox = needsSudoCheckBox
 		self.__action = None
 		self.__selectedCheckBox = selectedCheckBox

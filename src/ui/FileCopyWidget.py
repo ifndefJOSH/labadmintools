@@ -36,6 +36,9 @@ class DataLineWidget(object):
 		print("Warning! You do not want to call this! You should have overridden this")
 		return ""
 
+	def deMarginLayout(self, layout : QHBoxLayout):
+		layout.setContentsMargins(0, 0, 0, 0)
+
 class FileCopyWidget(DataLineWidget):
 	def setupUi(self, Form):
 		self.__form = Form
@@ -52,6 +55,8 @@ class FileCopyWidget(DataLineWidget):
 		self.horizontalLayout.setObjectName(u"horizontalLayout")
 		self.sourcePathBox = QLineEdit(Form)
 		self.sourcePathBox.setObjectName(u"sourcePathBox")
+		self.sourcePathBox.setFrame(False)
+		self.sourcePathBox.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
 		self.horizontalLayout.addWidget(self.sourcePathBox)
 
@@ -62,6 +67,8 @@ class FileCopyWidget(DataLineWidget):
 
 		self.targetPathBox = QLineEdit(Form)
 		self.targetPathBox.setObjectName(u"targetPathBox")
+		self.targetPathBox.setFrame(False)
+		self.targetPathBox.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
 		self.horizontalLayout.addWidget(self.targetPathBox)
 
@@ -77,6 +84,7 @@ class FileCopyWidget(DataLineWidget):
 		self.sourcePathBox.setPlaceholderText(QCoreApplication.translate("Form", u"Source File", None))
 		self.browseSourceFile.setText(QCoreApplication.translate("Form", u"...", None))
 		self.targetPathBox.setPlaceholderText(QCoreApplication.translate("Form", u"Target Path (defaults to $HOME)", None))
+		self.deMarginLayout(self.horizontalLayout)
 	# retranslateUi
 
 	def browse(self):
@@ -103,6 +111,8 @@ class ShellScriptWidget(DataLineWidget):
 		self.horizontalLayout.setObjectName(u"horizontalLayout")
 		self.sourcePathBox = QLineEdit(Form)
 		self.sourcePathBox.setObjectName(u"sourcePathBox")
+		self.sourcePathBox.setFrame(False)
+		self.sourcePathBox.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
 		self.horizontalLayout.addWidget(self.sourcePathBox)
 
@@ -122,6 +132,7 @@ class ShellScriptWidget(DataLineWidget):
 		Form.setWindowTitle(QCoreApplication.translate("Form", u"Shell Script Widget", None))
 		self.sourcePathBox.setPlaceholderText(QCoreApplication.translate("Form", u"Path to Script", None))
 		self.browseSourceFile.setText(QCoreApplication.translate("Form", u"...", None))
+		self.deMarginLayout(self.horizontalLayout)
 	# retranslateUi
 
 	def browse(self):
@@ -150,6 +161,8 @@ class CommandWidget(DataLineWidget):
 		self.commandBox = QLineEdit(Form)
 		self.commandBox.setObjectName(u"commandBox")
 		self.commandBox.setFont(commandBoxFont)
+		self.commandBox.setFrame(False)
+		self.commandBox.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
 		self.horizontalLayout.addWidget(self.commandBox)
 
@@ -161,6 +174,7 @@ class CommandWidget(DataLineWidget):
 	def retranslateUi(self, Form):
 		Form.setWindowTitle(QCoreApplication.translate("Form", u"Command Widget", None))
 		self.commandBox.setPlaceholderText(QCoreApplication.translate("Form", u"Command", None))
+		self.deMarginLayout(self.horizontalLayout)
 	# retranslateUi
 
 	def toData(self) -> str:
