@@ -150,6 +150,16 @@ class Action:
 		else:
 			return f"script {self.__data}"
 
+	def toShellScriptLine(self) -> str:
+		comment = f"# {self.__comment}\n" if self.__comment != "" else ""
+		if self.__actionType == Action.COMMAND:
+			return f"{comment}ssh $HOSTNAME \"{'sudo ' if self.__needsSudo else ''}{self.__data}\""
+		elif self.__actionType == Action.SHELL_SCRIPT:
+			return f"{comment}cat {self.__data} | ssh $HOSTNAME"
+		else:
+			to, frm = self.__data.split(' ')
+			return f"{comment}scp {to} $HOSTNAME:{frm}"
+
 class ActionRow:
 	DATA_COLUMN_IDX=2
 	def __init__(self
@@ -251,6 +261,13 @@ class ActionRow:
 	def resetIndex(self, idx : int):
 		self.__idx = idx
 
+	def toShellScriptLine(self) -> str:
+		valid, msg = self.createAction()
+		if not valid:
+			raise Exception(msg)
+		assert(self.__action is not None)
+		return self.__action.toShellScriptLine()
+
 class ActionList(QObject):
 	finished = pyqtSignal()
 	progress = pyqtSignal(int)
@@ -348,6 +365,22 @@ class ActionList(QObject):
 
 	def allLogs(self) -> list:
 		return [a.getLogs() for a in self.__actionList]
+
+	def toShellScript(self) -> str:
+		o, c = '{', '}'
+		nt = "\n\t"
+		execFn = f"""runActionList() {o}\n{nt.join([a.toShellScriptLine() for a in self.__actionList])}\n{c}"""
+		script = """#!/bin/bash
+# Automatically generated script file. Please provide the .labcomputer file as the first parameter
+
+%%FUNCTION_PLACEHOLDER%%
+
+export -f runActionList
+
+awk -F, '{OFS=","; if ($2 != "") print $1"\\@"$2; else print $1"\\@"$3}' $@ | xargs -I {} bash -c 'runActionList "$@" || true' _ {}
+		"""
+
+		return script.replace("%%FUNCTION_PLACEHOLDER%%", execFn)
 
 if __name__ == "__main__":
 	print("Cannot run this file!")

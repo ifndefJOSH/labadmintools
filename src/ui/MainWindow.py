@@ -121,6 +121,8 @@ class MainWindow(object):
 		self.actionSave_Action_List = QAction(mainWindow)
 		self.actionSave_Action_List.setObjectName(u"actionSave_Action_List")
 		self.actionSave_Action_List.setIcon(saveIcon)
+		self.actionExport_Script = QAction(mainWindow)
+		self.actionExport_Script.setObjectName(u"actionExport_Script")
 		self.actionLoad_Action_List = QAction(mainWindow)
 		self.actionLoad_Action_List.setObjectName(u"actionLoad_Action_List")
 		self.actionLoad_Action_List.setIcon(openIcon)
@@ -442,6 +444,8 @@ class MainWindow(object):
 		self.menuAdd_Action.addAction(self.actionCommand_Action)
 		self.menuAdd_Action.addAction(self.actionFile_Copy_Action)
 		self.menuAdd_Action.addAction(self.actionScript_Action)
+		self.menuScript.addSeparator()
+		self.menuScript.addAction(self.actionExport_Script)
 		self.menuLogs.addAction(self.actionSave_Logs)
 		self.menuLogs.addAction(self.actionClear_Logs)
 
@@ -473,6 +477,7 @@ class MainWindow(object):
 		self.actionRun.setText(QCoreApplication.translate("mainWindow", u"Run", None))
 		self.actionSave_Action_List.setText(QCoreApplication.translate("mainWindow", u"Save Action List", None))
 		self.actionLoad_Action_List.setText(QCoreApplication.translate("mainWindow", u"Load Action List", None))
+		self.actionExport_Script.setText(QCoreApplication.translate("mainWindow", u"Export Action List as Shell Script", None))
 		self.actionSave_Logs.setText(QCoreApplication.translate("mainWindow", u"Save Logs", None))
 		self.actionClear_Logs.setText(QCoreApplication.translate("mainWindow", u"Clear Logs", None))
 		___qtablewidgetitem8 = self.machineListWidget.horizontalHeaderItem(0)
@@ -651,7 +656,7 @@ class MainWindow(object):
 
 	def saveLab(self):
 		filename = QFileDialog.getSaveFileName(None
-										, "Open Computer Lab List"
+										, "Save Computer Lab List"
 										, os.getcwd()
 										, "Computer Lab List (*.computerlab)")
 		if filename[0] == "":
@@ -684,6 +689,18 @@ class MainWindow(object):
 				break
 			w.parent().removeChild(w)
 
+	def exportShellScript(self):
+		filename = QFileDialog.getSaveFileName(None
+										, "Save action list as shell script"
+										, os.getcwd()
+										, "Shell Script (*.sh)")
+		if filename[0] == "":
+			return
+		script = self.__actionList.toShellScript()
+		with open(filename[0], 'w') as f:
+			f.write(script)
+		self.statusbar.showMessage(f"Saved action to script as f{filename[0]}")
+
 
 	def setupSlots(self):
 		# My 'Action' class is different then QAction. That is what is being referred to here
@@ -711,6 +728,7 @@ class MainWindow(object):
 		self.actionRun.triggered.connect(self.runMyActions)
 		self.runActions.clicked.connect(self.runMyActions)
 		self.deleteSelectedActions.clicked.connect(lambda : self.__actionList.deleteSelected())
+		self.actionExport_Script.triggered.connect(self.exportShellScript)
 
 		# Lab machine stuff
 		self.addMachine.clicked.connect(self.addLabMachine)
