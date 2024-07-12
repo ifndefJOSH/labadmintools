@@ -252,7 +252,7 @@ class ActionList(QObject):
 	finished = pyqtSignal()
 	progress = pyqtSignal(int)
 	progressMessage = pyqtSignal(str)
-	def __init__(self, filename : str = None):
+	def __init__(self, filename : str | None = None):
 		super().__init__(None)
 		self.__actionList = []
 		if filename is None:

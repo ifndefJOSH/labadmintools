@@ -566,7 +566,6 @@ class MainWindow(object):
 		self.machineListWidget.setCellWidget(newIdx, 1, unameBox)
 		self.machineListWidget.setCellWidget(newIdx, 2, ipBox)
 		self.machineListWidget.setCellWidget(newIdx, 3, hostBox)
-		row.setDelCallback(lambda : self.machineListWidget.removeRow(newIdx))
 		self.__lab.addLabComputerRow(row)
 
 	def newLab(self):
@@ -620,8 +619,7 @@ class MainWindow(object):
 		if filename[0] == "":
 			return
 		self.newLab()
-		self.__lab = Lab(filename[0])
-		self.__lab.setupCallbacks(self.machineListWidget)
+		self.__lab = Lab(filename[0], self.machineListWidget)
 		# This one we have to append widgets
 		for row in self.__lab.widgets():
 			selected, unameBox, ipBox, hostBox = row
@@ -654,8 +652,8 @@ class MainWindow(object):
 
 	def setupSlots(self):
 		# My 'Action' class is different then QAction. That is what is being referred to here
-		self.__actionList = ActionList()
-		self.__lab = Lab()
+		self.__actionList = ActionList(None)
+		self.__lab = Lab(None, self.machineListWidget)
 		self.__allLogs = []
 		self.__mainThread = self.__mainWindow.thread()
 
@@ -668,19 +666,20 @@ class MainWindow(object):
 		self.actionLoad_Action_List.triggered.connect(self.openActions)
 		self.saveActionList.clicked.connect(self.saveActions)
 		self.actionSave_Action_List.triggered.connect(self.saveActions)
-		self.selectAllActions.clicked.connect(self.__actionList.selectAll)
-		self.selectInvertedActions.clicked.connect(self.__actionList.toggleSelected)
-		self.deselectAllActions.clicked.connect(self.__actionList.deselectAll)
-		self.actionDelete_Action.triggered.connect(self.__actionList.deleteSelected)
+		self.selectAllActions.clicked.connect(lambda : self.__actionList.selectAll())
+		self.selectInvertedActions.clicked.connect(lambda : self.__actionList.toggleSelected())
+		self.deselectAllActions.clicked.connect(lambda : self.__actionList.deselectAll())
+		self.actionDelete_Action.triggered.connect(lambda : self.__actionList.deleteSelected())
 		self.actionRun.triggered.connect(self.runMyActions)
 		self.runActions.clicked.connect(self.runMyActions)
 
 		# Lab machine stuff
 		self.addMachine.clicked.connect(self.addLabMachine)
-		self.selectAllMachines.clicked.connect(self.__lab.selectAll)
-		self.invertMachineSelection.clicked.connect(self.__lab.toggleSelected)
-		self.deselectAllMachines.clicked.connect(self.__lab.deselectAll)
-		self.deleteMachine.clicked.connect(lambda : (self.__lab.deleteSelected(), self.__lab.setupCallbacks(self.machineListWidget)))
+		# These need to be lambdas since self.__lab may change
+		self.selectAllMachines.clicked.connect(lambda : self.__lab.selectAll())
+		self.invertMachineSelection.clicked.connect(lambda : self.__lab.toggleSelected())
+		self.deselectAllMachines.clicked.connect(lambda : self.__lab.deselectAll())
+		self.deleteMachine.clicked.connect(lambda : self.__lab.deleteSelected())
 		self.actionNew_Lab_List.triggered.connect(self.newLab)
 		self.actionOpen_Lab_List.triggered.connect(self.openLab)
 		self.actionSave_Lab_List.triggered.connect(self.saveLab)
