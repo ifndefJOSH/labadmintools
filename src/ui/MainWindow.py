@@ -45,7 +45,8 @@ class MainWindow(object):
 		if QIcon.hasThemeIcon(iconThemeName):
 			docNewIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			docNewIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			pixmapi = getattr(QStyle, "SP_FileIcon")
+			docNewIcon = mainWindow.style().standardIcon(pixmapi)
 
 		self.actionNew_Lab_List.setIcon(docNewIcon)
 		self.actionOpen_Lab_List = QAction(mainWindow)
@@ -55,7 +56,8 @@ class MainWindow(object):
 		if QIcon.hasThemeIcon(iconThemeName):
 			openIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			openIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			pixmapi = getattr(QStyle, "SP_DirOpenIcon")
+			openIcon = mainWindow.style().standardIcon(pixmapi)
 
 		self.actionOpen_Lab_List.setIcon(openIcon)
 		self.actionSave_Lab_List = QAction(mainWindow)
@@ -65,7 +67,8 @@ class MainWindow(object):
 		if QIcon.hasThemeIcon(iconThemeName):
 			saveIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			saveIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			pixmapi = getattr(QStyle, "SP_DialogSaveButton")
+			saveIcon = mainWindow.style().standardIcon(pixmapi)
 
 		self.actionSave_Lab_List.setIcon(saveIcon)
 		self.actionExit = QAction(mainWindow)
@@ -75,7 +78,8 @@ class MainWindow(object):
 		if QIcon.hasThemeIcon(iconThemeName):
 			exitIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			exitIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			pixmapi = getattr(QStyle, "SP_DialogCloseButton")
+			exitIcon = mainWindow.style().standardIcon(pixmapi)
 
 		self.actionExit.setIcon(exitIcon)
 		self.actionDelete_Action = QAction(mainWindow)
@@ -85,7 +89,8 @@ class MainWindow(object):
 		if QIcon.hasThemeIcon(iconThemeName):
 			deleteIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			deleteIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			pixmapi = getattr(QStyle, "SP_DialogDiscardButton")
+			deleteIcon = mainWindow.style().standardIcon(pixmapi)
 
 		self.actionDelete_Action.setIcon(deleteIcon)
 		# self.actionstdout_Logs = QAction(mainWindow)
@@ -109,7 +114,8 @@ class MainWindow(object):
 		if QIcon.hasThemeIcon(iconThemeName):
 			startIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			startIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			pixmapi = getattr(QStyle, "SP_MediaPlay")
+			startIcon = mainWindow.style().standardIcon(pixmapi)
 
 		self.actionRun.setIcon(startIcon)
 		self.actionSave_Action_List = QAction(mainWindow)
@@ -160,7 +166,7 @@ class MainWindow(object):
 		if QIcon.hasThemeIcon(iconThemeName):
 			addIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			addIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			addIcon = docNewIcon
 
 		self.addMachine.setIcon(addIcon)
 
@@ -401,14 +407,14 @@ class MainWindow(object):
 		self.menuScript.setObjectName(u"menuScript")
 		self.menuAdd_Action = QMenu(self.menuScript)
 		self.menuAdd_Action.setObjectName(u"menuAdd_Action")
-		openIcon0 = QIcon()
+		plusIcon = QIcon()
 		iconThemeName = u"add"
 		if QIcon.hasThemeIcon(iconThemeName):
-			openIcon0 = QIcon.fromTheme(iconThemeName)
+			plusIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			openIcon0.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			plusIcon = addIcon
 
-		self.menuAdd_Action.setIcon(openIcon0)
+		self.menuAdd_Action.setIcon(plusIcon)
 		self.menuLogs = QMenu(self.menubar)
 		self.menuLogs.setObjectName(u"menuLogs")
 		# self.menuShow_Logs = QMenu(self.menuLogs)
