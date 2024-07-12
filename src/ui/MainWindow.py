@@ -20,6 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
+import sys
 from threading import Thread
 from PyQt5 import *
 from PyQt5.QtCore import *  # type: ignore
@@ -38,62 +39,62 @@ class MainWindow(object):
 		mainWindow.resize(800, 639)
 		self.actionNew_Lab_List = QAction(mainWindow)
 		self.actionNew_Lab_List.setObjectName(u"actionNew_Lab_List")
-		icon = QIcon()
+		docNewIcon = QIcon()
 		iconThemeName = u"document-new"
 		if QIcon.hasThemeIcon(iconThemeName):
-			icon = QIcon.fromTheme(iconThemeName)
+			docNewIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			icon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			docNewIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
 
-		self.actionNew_Lab_List.setIcon(icon)
+		self.actionNew_Lab_List.setIcon(docNewIcon)
 		self.actionOpen_Lab_List = QAction(mainWindow)
 		self.actionOpen_Lab_List.setObjectName(u"actionOpen_Lab_List")
-		icon1 = QIcon()
+		openIcon = QIcon()
 		iconThemeName = u"document-open"
 		if QIcon.hasThemeIcon(iconThemeName):
-			icon1 = QIcon.fromTheme(iconThemeName)
+			openIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			icon1.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			openIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
 
-		self.actionOpen_Lab_List.setIcon(icon1)
+		self.actionOpen_Lab_List.setIcon(openIcon)
 		self.actionSave_Lab_List = QAction(mainWindow)
 		self.actionSave_Lab_List.setObjectName(u"actionSave_Lab_List")
-		icon2 = QIcon()
+		saveIcon = QIcon()
 		iconThemeName = u"document-save"
 		if QIcon.hasThemeIcon(iconThemeName):
-			icon2 = QIcon.fromTheme(iconThemeName)
+			saveIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			icon2.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			saveIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
 
-		self.actionSave_Lab_List.setIcon(icon2)
+		self.actionSave_Lab_List.setIcon(saveIcon)
 		self.actionExit = QAction(mainWindow)
 		self.actionExit.setObjectName(u"actionExit")
-		icon3 = QIcon()
+		exitIcon = QIcon()
 		iconThemeName = u"exit"
 		if QIcon.hasThemeIcon(iconThemeName):
-			icon3 = QIcon.fromTheme(iconThemeName)
+			exitIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			icon3.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			exitIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
 
-		self.actionExit.setIcon(icon3)
+		self.actionExit.setIcon(exitIcon)
 		self.actionDelete_Action = QAction(mainWindow)
 		self.actionDelete_Action.setObjectName(u"actionDelete_Action")
-		icon4 = QIcon()
+		deleteIcon = QIcon()
 		iconThemeName = u"delete"
 		if QIcon.hasThemeIcon(iconThemeName):
-			icon4 = QIcon.fromTheme(iconThemeName)
+			deleteIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			icon4.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			deleteIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
 
-		self.actionDelete_Action.setIcon(icon4)
-		self.actionstdout_Logs = QAction(mainWindow)
-		self.actionstdout_Logs.setObjectName(u"actionstdout_Logs")
-		self.actionstdout_Logs.setCheckable(True)
-		self.actionstdout_Logs.setChecked(True)
-		self.actionstderr_Logs = QAction(mainWindow)
-		self.actionstderr_Logs.setObjectName(u"actionstderr_Logs")
-		self.actionstderr_Logs.setCheckable(True)
-		self.actionstderr_Logs.setChecked(True)
+		self.actionDelete_Action.setIcon(deleteIcon)
+		# self.actionstdout_Logs = QAction(mainWindow)
+		# self.actionstdout_Logs.setObjectName(u"actionstdout_Logs")
+		# self.actionstdout_Logs.setCheckable(True)
+		# self.actionstdout_Logs.setChecked(True)
+		# self.actionstderr_Logs = QAction(mainWindow)
+		# self.actionstderr_Logs.setObjectName(u"actionstderr_Logs")
+		# self.actionstderr_Logs.setCheckable(True)
+		# self.actionstderr_Logs.setChecked(True)
 		self.actionScript_Action = QAction(mainWindow)
 		self.actionScript_Action.setObjectName(u"actionScript_Action")
 		self.actionCommand_Action = QAction(mainWindow)
@@ -102,26 +103,26 @@ class MainWindow(object):
 		self.actionFile_Copy_Action.setObjectName(u"actionFile_Copy_Action")
 		self.actionRun = QAction(mainWindow)
 		self.actionRun.setObjectName(u"actionRun")
-		icon5 = QIcon()
+		startIcon = QIcon()
 		iconThemeName = u"media-playback-start"
 		if QIcon.hasThemeIcon(iconThemeName):
-			icon5 = QIcon.fromTheme(iconThemeName)
+			startIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			icon5.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			startIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
 
-		self.actionRun.setIcon(icon5)
+		self.actionRun.setIcon(startIcon)
 		self.actionSave_Action_List = QAction(mainWindow)
 		self.actionSave_Action_List.setObjectName(u"actionSave_Action_List")
-		self.actionSave_Action_List.setIcon(icon2)
+		self.actionSave_Action_List.setIcon(saveIcon)
 		self.actionLoad_Action_List = QAction(mainWindow)
 		self.actionLoad_Action_List.setObjectName(u"actionLoad_Action_List")
-		self.actionLoad_Action_List.setIcon(icon1)
+		self.actionLoad_Action_List.setIcon(openIcon)
 		self.actionSave_Logs = QAction(mainWindow)
 		self.actionSave_Logs.setObjectName(u"actionSave_Logs")
-		self.actionSave_Logs.setIcon(icon2)
+		self.actionSave_Logs.setIcon(saveIcon)
 		self.actionClear_Logs = QAction(mainWindow)
 		self.actionClear_Logs.setObjectName(u"actionClear_Logs")
-		self.actionClear_Logs.setIcon(icon4)
+		self.actionClear_Logs.setIcon(deleteIcon)
 		self.centralwidget = QWidget(mainWindow)
 		self.centralwidget.setObjectName(u"centralwidget")
 		self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -153,20 +154,20 @@ class MainWindow(object):
 		self.horizontalLayout.setObjectName(u"horizontalLayout")
 		self.addMachine = QToolButton(self.tab)
 		self.addMachine.setObjectName(u"addMachine")
-		icon6 = QIcon()
+		addIcon = QIcon()
 		iconThemeName = u"edit-add"
 		if QIcon.hasThemeIcon(iconThemeName):
-			icon6 = QIcon.fromTheme(iconThemeName)
+			addIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			icon6.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			addIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
 
-		self.addMachine.setIcon(icon6)
+		self.addMachine.setIcon(addIcon)
 
 		self.horizontalLayout.addWidget(self.addMachine)
 
 		self.deleteMachine = QToolButton(self.tab)
 		self.deleteMachine.setObjectName(u"deleteMachine")
-		self.deleteMachine.setIcon(icon4)
+		self.deleteMachine.setIcon(deleteIcon)
 
 		self.horizontalLayout.addWidget(self.deleteMachine)
 
@@ -179,40 +180,40 @@ class MainWindow(object):
 
 		self.selectAllMachines = QToolButton(self.tab)
 		self.selectAllMachines.setObjectName(u"selectAllMachines")
-		icon7 = QIcon()
+		selectAllIcon = QIcon()
 		iconThemeName = u"edit-select-all"
 		if QIcon.hasThemeIcon(iconThemeName):
-			icon7 = QIcon.fromTheme(iconThemeName)
+			selectAllIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			icon7.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			selectAllIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
 
-		self.selectAllMachines.setIcon(icon7)
+		self.selectAllMachines.setIcon(selectAllIcon)
 
 		self.horizontalLayout.addWidget(self.selectAllMachines)
 
 		self.invertMachineSelection = QToolButton(self.tab)
 		self.invertMachineSelection.setObjectName(u"invertMachineSelection")
-		icon8 = QIcon()
+		invertSelectionIcon = QIcon()
 		iconThemeName = u"edit-select-invert"
 		if QIcon.hasThemeIcon(iconThemeName):
-			icon8 = QIcon.fromTheme(iconThemeName)
+			invertSelectionIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			icon8.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			invertSelectionIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
 
-		self.invertMachineSelection.setIcon(icon8)
+		self.invertMachineSelection.setIcon(invertSelectionIcon)
 
 		self.horizontalLayout.addWidget(self.invertMachineSelection)
 
 		self.deselectAllMachines = QToolButton(self.tab)
 		self.deselectAllMachines.setObjectName(u"deselectAllMachines")
-		icon9 = QIcon()
+		deselectIcon = QIcon()
 		iconThemeName = u"edit-select-none"
 		if QIcon.hasThemeIcon(iconThemeName):
-			icon9 = QIcon.fromTheme(iconThemeName)
+			deselectIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			icon9.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			deselectIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
 
-		self.deselectAllMachines.setIcon(icon9)
+		self.deselectAllMachines.setIcon(deselectIcon)
 
 		self.horizontalLayout.addWidget(self.deselectAllMachines)
 
@@ -224,11 +225,11 @@ class MainWindow(object):
 		self.verticalLayout_2.addLayout(self.horizontalLayout)
 
 		self.tabWidget.addTab(self.tab, "")
-		self.tab_2 = QWidget()
-		self.tab_2.setObjectName(u"tab_2")
-		self.verticalLayout_3 = QVBoxLayout(self.tab_2)
+		self.actionsTab = QWidget()
+		self.actionsTab.setObjectName(u"actionsTab")
+		self.verticalLayout_3 = QVBoxLayout(self.actionsTab)
 		self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-		self.actionListWidget = QTableWidget(self.tab_2)
+		self.actionListWidget = QTableWidget(self.actionsTab)
 		if (self.actionListWidget.columnCount() < 5):
 			self.actionListWidget.setColumnCount(5)
 		__qtablewidgetitem7 = QTableWidgetItem()
@@ -245,114 +246,125 @@ class MainWindow(object):
 
 		self.verticalLayout_3.addWidget(self.actionListWidget)
 
-		self.horizontalLayout_4 = QHBoxLayout()
-		self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
-		self.newAction = QToolButton(self.tab_2)
+		self.actionsHorizontalLayout = QHBoxLayout()
+		self.actionsHorizontalLayout.setObjectName(u"actionsHorizontalLayout")
+		self.newAction = QToolButton(self.actionsTab)
 		self.newAction.setObjectName(u"newAction")
-		self.newAction.setIcon(icon)
+		self.newAction.setIcon(docNewIcon)
 
-		self.horizontalLayout_4.addWidget(self.newAction)
+		self.actionsHorizontalLayout.addWidget(self.newAction)
 
-		self.openActionList = QToolButton(self.tab_2)
+		self.openActionList = QToolButton(self.actionsTab)
 		self.openActionList.setObjectName(u"openActionList")
-		self.openActionList.setIcon(icon1)
+		self.openActionList.setIcon(openIcon)
 
-		self.horizontalLayout_4.addWidget(self.openActionList)
+		self.actionsHorizontalLayout.addWidget(self.openActionList)
 
-		self.saveActionList = QToolButton(self.tab_2)
+		self.saveActionList = QToolButton(self.actionsTab)
 		self.saveActionList.setObjectName(u"saveActionList")
-		self.saveActionList.setIcon(icon2)
+		self.saveActionList.setIcon(saveIcon)
 
-		self.horizontalLayout_4.addWidget(self.saveActionList)
+		self.actionsHorizontalLayout.addWidget(self.saveActionList)
 
-		self.line_2 = QFrame(self.tab_2)
+		self.line_2 = QFrame(self.actionsTab)
 		self.line_2.setObjectName(u"line_2")
 		self.line_2.setFrameShape(QFrame.VLine)
 		self.line_2.setFrameShadow(QFrame.Sunken)
 
-		self.horizontalLayout_4.addWidget(self.line_2)
+		self.actionsHorizontalLayout.addWidget(self.line_2)
 
-		self.selectAllActions = QToolButton(self.tab_2)
+		self.selectAllActions = QToolButton(self.actionsTab)
 		self.selectAllActions.setObjectName(u"selectAllActions")
-		self.selectAllActions.setIcon(icon7)
+		self.selectAllActions.setIcon(selectAllIcon)
 
-		self.horizontalLayout_4.addWidget(self.selectAllActions)
+		self.actionsHorizontalLayout.addWidget(self.selectAllActions)
 
-		self.selectInvertedActions = QToolButton(self.tab_2)
+		self.selectInvertedActions = QToolButton(self.actionsTab)
 		self.selectInvertedActions.setObjectName(u"selectInvertedActions")
-		self.selectInvertedActions.setIcon(icon8)
+		self.selectInvertedActions.setIcon(invertSelectionIcon)
 
-		self.horizontalLayout_4.addWidget(self.selectInvertedActions)
+		self.actionsHorizontalLayout.addWidget(self.selectInvertedActions)
 
-		self.deselectAllActions = QToolButton(self.tab_2)
+		self.deselectAllActions = QToolButton(self.actionsTab)
 		self.deselectAllActions.setObjectName(u"deselectAllActions")
-		self.deselectAllActions.setIcon(icon9)
+		self.deselectAllActions.setIcon(deselectIcon)
 
-		self.horizontalLayout_4.addWidget(self.deselectAllActions)
+		self.actionsHorizontalLayout.addWidget(self.deselectAllActions)
 
-		self.line_4 = QFrame(self.tab_2)
+		self.line_4 = QFrame(self.actionsTab)
 		self.line_4.setObjectName(u"line_4")
 		self.line_4.setFrameShape(QFrame.VLine)
 		self.line_4.setFrameShadow(QFrame.Sunken)
 
-		self.horizontalLayout_4.addWidget(self.line_4)
+		self.actionsHorizontalLayout.addWidget(self.line_4)
 
-		self.runActions = QToolButton(self.tab_2)
+		self.deleteSelectedActions = QToolButton(self.actionsTab)
+		self.deleteSelectedActions.setObjectName(u"deleteSelectedActions")
+		self.deleteSelectedActions.setIcon(deleteIcon)
+
+		self.actionsHorizontalLayout.addWidget(self.deleteSelectedActions)
+
+		self.runActions = QToolButton(self.actionsTab)
 		self.runActions.setObjectName(u"runActions")
-		self.runActions.setIcon(icon5)
+		self.runActions.setIcon(startIcon)
 		self.runActions.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
 
-		self.horizontalLayout_4.addWidget(self.runActions)
+		self.actionsHorizontalLayout.addWidget(self.runActions)
 
 		self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-		self.horizontalLayout_4.addItem(self.horizontalSpacer_3)
+		self.actionsHorizontalLayout.addItem(self.horizontalSpacer_3)
 
 
-		self.verticalLayout_3.addLayout(self.horizontalLayout_4)
+		self.verticalLayout_3.addLayout(self.actionsHorizontalLayout)
 
-		self.tabWidget.addTab(self.tab_2, "")
-		self.tab_3 = QWidget()
-		self.tab_3.setObjectName(u"tab_3")
-		self.horizontalLayout_3 = QHBoxLayout(self.tab_3)
+		self.tabWidget.addTab(self.actionsTab, "")
+		self.logsTab = QWidget()
+		self.logsTab.setObjectName(u"logsTab")
+		self.horizontalLayout_3 = QHBoxLayout(self.logsTab)
 		self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
 		self.verticalLayout_4 = QVBoxLayout()
 		self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-		self.logTree = QTreeWidget(self.tab_3)
+		self.logTree = QTreeWidget(self.logsTab)
 		self.logTree.setObjectName(u"logTree")
 
 		self.verticalLayout_4.addWidget(self.logTree)
 
 		self.horizontalLayout_2 = QHBoxLayout()
 		self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-		self.selectAllMachineLogs = QToolButton(self.tab_3)
+		self.selectAllMachineLogs = QToolButton(self.logsTab)
 		self.selectAllMachineLogs.setObjectName(u"selectAllMachineLogs")
-		self.selectAllMachineLogs.setIcon(icon7)
+		self.selectAllMachineLogs.setIcon(selectAllIcon)
 
 		self.horizontalLayout_2.addWidget(self.selectAllMachineLogs)
 
-		self.invertMachineLogSelection = QToolButton(self.tab_3)
+		self.invertMachineLogSelection = QToolButton(self.logsTab)
 		self.invertMachineLogSelection.setObjectName(u"invertMachineLogSelection")
-		self.invertMachineLogSelection.setIcon(icon8)
+		self.invertMachineLogSelection.setIcon(invertSelectionIcon)
 
 		self.horizontalLayout_2.addWidget(self.invertMachineLogSelection)
 
-		self.deselectAllMachineLogs = QToolButton(self.tab_3)
+		self.deselectAllMachineLogs = QToolButton(self.logsTab)
 		self.deselectAllMachineLogs.setObjectName(u"deselectAllMachineLogs")
-		self.deselectAllMachineLogs.setIcon(icon9)
+		self.deselectAllMachineLogs.setIcon(deselectIcon)
 
 		self.horizontalLayout_2.addWidget(self.deselectAllMachineLogs)
 
-		self.line = QFrame(self.tab_3)
+		self.line = QFrame(self.logsTab)
 		self.line.setObjectName(u"line")
 		self.line.setFrameShape(QFrame.VLine)
 		self.line.setFrameShadow(QFrame.Sunken)
 
 		self.horizontalLayout_2.addWidget(self.line)
 
-		self.saveLogs = QToolButton(self.tab_3)
+		self.deleteSelectedLogs = QToolButton(self.logsTab)
+		self.deleteSelectedLogs.setObjectName(u"deleteSelectedLogs")
+		self.deleteSelectedLogs.setIcon(deleteIcon)
+		self.horizontalLayout_2.addWidget(self.deleteSelectedLogs)
+
+		self.saveLogs = QToolButton(self.logsTab)
 		self.saveLogs.setObjectName(u"saveLogs")
-		self.saveLogs.setIcon(icon2)
+		self.saveLogs.setIcon(saveIcon)
 
 		self.horizontalLayout_2.addWidget(self.saveLogs)
 
@@ -366,7 +378,7 @@ class MainWindow(object):
 
 		self.horizontalLayout_3.addLayout(self.verticalLayout_4)
 
-		self.logViewer = QTextEdit(self.tab_3)
+		self.logViewer = QTextEdit(self.logsTab)
 		self.logViewer.setObjectName(u"logViewer")
 		self.logViewer.setReadOnly(True)
 		monoFont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
@@ -374,7 +386,7 @@ class MainWindow(object):
 
 		self.horizontalLayout_3.addWidget(self.logViewer)
 
-		self.tabWidget.addTab(self.tab_3, "")
+		self.tabWidget.addTab(self.logsTab, "")
 
 		self.verticalLayout.addWidget(self.tabWidget)
 
@@ -388,18 +400,18 @@ class MainWindow(object):
 		self.menuScript.setObjectName(u"menuScript")
 		self.menuAdd_Action = QMenu(self.menuScript)
 		self.menuAdd_Action.setObjectName(u"menuAdd_Action")
-		icon10 = QIcon()
+		openIcon0 = QIcon()
 		iconThemeName = u"add"
 		if QIcon.hasThemeIcon(iconThemeName):
-			icon10 = QIcon.fromTheme(iconThemeName)
+			openIcon0 = QIcon.fromTheme(iconThemeName)
 		else:
-			icon10.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			openIcon0.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
 
-		self.menuAdd_Action.setIcon(icon10)
+		self.menuAdd_Action.setIcon(openIcon0)
 		self.menuLogs = QMenu(self.menubar)
 		self.menuLogs.setObjectName(u"menuLogs")
-		self.menuShow_Logs = QMenu(self.menuLogs)
-		self.menuShow_Logs.setObjectName(u"menuShow_Logs")
+		# self.menuShow_Logs = QMenu(self.menuLogs)
+		# self.menuShow_Logs.setObjectName(u"menuShow_Logs")
 		mainWindow.setMenuBar(self.menubar)
 		self.statusbar = QStatusBar(mainWindow)
 		self.statusbar.setObjectName(u"statusbar")
@@ -423,11 +435,8 @@ class MainWindow(object):
 		self.menuAdd_Action.addAction(self.actionCommand_Action)
 		self.menuAdd_Action.addAction(self.actionFile_Copy_Action)
 		self.menuAdd_Action.addAction(self.actionScript_Action)
-		self.menuLogs.addAction(self.menuShow_Logs.menuAction())
 		self.menuLogs.addAction(self.actionSave_Logs)
 		self.menuLogs.addAction(self.actionClear_Logs)
-		self.menuShow_Logs.addAction(self.actionstdout_Logs)
-		self.menuShow_Logs.addAction(self.actionstderr_Logs)
 
 		self.progressBar = QProgressBar()
 		self.progressBar.setRange(0, 0)
@@ -449,8 +458,8 @@ class MainWindow(object):
 		self.actionSave_Lab_List.setText(QCoreApplication.translate("mainWindow", u"Save Lab List", None))
 		self.actionExit.setText(QCoreApplication.translate("mainWindow", u"Exit", None))
 		self.actionDelete_Action.setText(QCoreApplication.translate("mainWindow", u"Delete Action", None))
-		self.actionstdout_Logs.setText(QCoreApplication.translate("mainWindow", u"stdout Logs", None))
-		self.actionstderr_Logs.setText(QCoreApplication.translate("mainWindow", u"stderr Logs", None))
+		# self.actionstdout_Logs.setText(QCoreApplication.translate("mainWindow", u"stdout Logs", None))
+		# self.actionstderr_Logs.setText(QCoreApplication.translate("mainWindow", u"stderr Logs", None))
 		self.actionScript_Action.setText(QCoreApplication.translate("mainWindow", u"Script Action", None))
 		self.actionCommand_Action.setText(QCoreApplication.translate("mainWindow", u"Command Action", None))
 		self.actionFile_Copy_Action.setText(QCoreApplication.translate("mainWindow", u"File Copy Action", None))
@@ -490,7 +499,7 @@ class MainWindow(object):
 		self.selectInvertedActions.setText(QCoreApplication.translate("mainWindow", u"...", None))
 		self.deselectAllActions.setText(QCoreApplication.translate("mainWindow", u"...", None))
 		self.runActions.setText(QCoreApplication.translate("mainWindow", u"Run Action List", None))
-		self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("mainWindow", u"Actions", None))
+		self.tabWidget.setTabText(self.tabWidget.indexOf(self.actionsTab), QCoreApplication.translate("mainWindow", u"Actions", None))
 		___qtreewidgetitem = self.logTree.headerItem()
 		___qtreewidgetitem.setText(2, QCoreApplication.translate("mainWindow", u"Return Code", None));
 		___qtreewidgetitem.setText(1, QCoreApplication.translate("mainWindow", u"Status", None));
@@ -499,12 +508,12 @@ class MainWindow(object):
 		self.invertMachineLogSelection.setText(QCoreApplication.translate("mainWindow", u"...", None))
 		self.deselectAllMachineLogs.setText(QCoreApplication.translate("mainWindow", u"...", None))
 		self.saveLogs.setText(QCoreApplication.translate("mainWindow", u"...", None))
-		self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QCoreApplication.translate("mainWindow", u"Logs", None))
+		self.tabWidget.setTabText(self.tabWidget.indexOf(self.logsTab), QCoreApplication.translate("mainWindow", u"Logs", None))
 		self.menuLab.setTitle(QCoreApplication.translate("mainWindow", u"Lab", None))
 		self.menuScript.setTitle(QCoreApplication.translate("mainWindow", u"Actions", None))
 		self.menuAdd_Action.setTitle(QCoreApplication.translate("mainWindow", u"Add Action", None))
 		self.menuLogs.setTitle(QCoreApplication.translate("mainWindow", u"Logs", None))
-		self.menuShow_Logs.setTitle(QCoreApplication.translate("mainWindow", u"Show Logs", None))
+		# self.menuShow_Logs.setTitle(QCoreApplication.translate("mainWindow", u"Show Logs", None))
 		self.setupSlots()
 	# retranslateUi
 
@@ -530,6 +539,7 @@ class MainWindow(object):
 		self.actionListWidget.setCellWidget(newIdx, 2, dataLineWidget)
 		self.actionListWidget.setCellWidget(newIdx, 3, commentLine)
 		self.actionListWidget.setCellWidget(newIdx, 4, needsSudo)
+		self.tabWidget.setCurrentIndex(1)
 
 	def openActions(self):
 		filename = QFileDialog.getOpenFileName(None
@@ -646,8 +656,13 @@ class MainWindow(object):
 		foldername = QFileDialog.getExistingDirectory(None
 											, "Folder to save logs to"
 											, os.getcwd())
+		if foldername == "":
+			self.statusbar.showMessage(f"Aborted save logs")
+			return
+
 		for lt in self.__allLogs:
 			lt.saveLogs(foldername)
+		self.statusbar.showMessage(f"Saved results to {foldername}")
 
 
 	def setupSlots(self):
@@ -656,6 +671,9 @@ class MainWindow(object):
 		self.__lab = Lab(None, self.machineListWidget)
 		self.__allLogs = []
 		self.__mainThread = self.__mainWindow.thread()
+
+		# Other stuff
+		self.actionExit.triggered.connect(lambda : sys.exit(0))
 
 		# Action editor stuff
 		self.newAction.clicked.connect(self.addAction)
@@ -672,6 +690,7 @@ class MainWindow(object):
 		self.actionDelete_Action.triggered.connect(lambda : self.__actionList.deleteSelected())
 		self.actionRun.triggered.connect(self.runMyActions)
 		self.runActions.clicked.connect(self.runMyActions)
+		self.deleteSelectedActions.clicked.connect(lambda : self.__actionList.deleteSelected())
 
 		# Lab machine stuff
 		self.addMachine.clicked.connect(self.addLabMachine)

@@ -77,9 +77,9 @@ class ActionLogNode:
 	def saveLogs(self, folder):
 		if not isinstance(self.__result, Result):
 			return
-		with open(os.path.join(folder, f"{self.__result.command}.stdout.log"), 'w') as f:
+		with open(os.path.join(folder, f"{self.__host}_{self.__result.command}.stdout.log"), 'w') as f:
 			f.write(self.__result.stdout)
-		with open(os.path.join(folder, f"{self.__result.command}.stderr.log"), 'w') as f:
+		with open(os.path.join(folder, f"{self.__host}_{self.__result.command}.stderr.log"), 'w') as f:
 			f.write(self.__result.stderr)
 
 
