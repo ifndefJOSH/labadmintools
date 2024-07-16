@@ -25,10 +25,12 @@ templateCommands = {
 		, "All system logs":Command("journalctl --no-pager")
 		, "Uptime":Command("uptime")
 	}
-	, "User Commands":{
+	, "User Management Commands":{
 		"Message All Users":Command("wall \"Message\"")
-		, "Message Specific User":Command("echo \"Message\" | write user")
+		, "Message Specific User":Command("echo \"Message\" | write USERNAME")
 		, "Currently Logged-in Users":Command("who")
+		, "Add User":Command("useradd USERNAME", True)
+		, "Delete User":Command("userdel -fr USERNAME", True)
 	}
 	, "Firewall Controls":{
 		"Start Firewall Service":Command("systemctl start firewalld", True)
@@ -65,6 +67,7 @@ class PossibleCommandDialog(object):
 	def retranslateUi(self, Dialog):
 		Dialog.setWindowTitle(QCoreApplication.translate("Template Commands", u"Template Commands", None))
 		commandsHeaderItem = self.commandsTree.headerItem()
+		commandsHeaderItem.setText(2, QCoreApplication.translate("Template Commands", u"Privileged?", None));
 		commandsHeaderItem.setText(1, QCoreApplication.translate("Template Commands", u"Command", None));
 		commandsHeaderItem.setText(0, QCoreApplication.translate("Template Commands", u"Description", None));
 		self.addTemplateCommands()
@@ -82,6 +85,7 @@ class PossibleCommandDialog(object):
 				cmdItem = QTreeWidgetItem()
 				cmdItem.setText(0, description)
 				cmdItem.setText(1, command.commandString)
+				cmdItem.setText(2, f"{'Yes' if command.privileged else 'No'}")
 				catItem.addChild(cmdItem)
 
 if __name__ == "__main__":
