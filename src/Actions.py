@@ -328,7 +328,7 @@ class ActionList(QObject):
 		self.finished.emit()
 
 	def selectedActionCount(self) -> int:
-		return len(filter(lambda a: a.selected(), self.__actionList))
+		return len(list(filter(lambda a: a.selected(), self.__actionList)))
 
 	def actionCount(self) -> int:
 		return len(self.__actionList)

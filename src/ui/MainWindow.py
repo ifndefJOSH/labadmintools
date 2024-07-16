@@ -31,6 +31,7 @@ from invoke.terminals import select  # type: ignore
 from Actions import *
 from LabList import *
 from Logs import *
+from ui.ExecuteDialog import createExecutionOptions
 
 class MainWindow(object):
 	def setupUi(self, mainWindow):
@@ -594,12 +595,17 @@ class MainWindow(object):
 		self.__lab.selectAll()
 		self.__lab.deleteSelected()
 
-	def runMyActions(self, justSelected : bool = False):
+	def runMyActions(self):
 		self.__workerThread = QThread()
 		self.__actionList.moveToThread(self.__workerThread)
 
 
-		password, accept = QInputDialog.getText(None, "Password", "Password", QLineEdit.Password)
+		# password, accept = QInputDialog.getText(None, "Password", "Password", QLineEdit.Password)
+		executionOptions = createExecutionOptions()
+		accept = executionOptions.execute
+		password = executionOptions.password
+		justSelectedActions = not executionOptions.allActions
+		justSelectedMachines = not executionOptions.allMachines
 		if not accept:
 			self.statusbar.showMessage("Aborted", 10000)
 			return
@@ -611,21 +617,24 @@ class MainWindow(object):
 			QMessageBox.critical(None, "No actions!", "No Actions!")
 			self.statusbar.showMessage("Aborted. No actions", 10000)
 			return
+		assert(password is not None)
 		self.statusbar.showMessage("Started tasks...", 10000)
 		self.progressBar.setValue(0)
 		self.progressBar.setVisible(True)
 		self.__actionList.moveToThread(self.__workerThread)
 		def start():
 			try:
-				if justSelected:
+				if justSelectedActions:
 					self.progressBar.setRange(0, self.__actionList.selectedActionCount())
-					self.__actionList.executeSelected(self.__lab, password)
+					self.__actionList.executeSelected(self.__lab, password, selectedMachinesOnly=justSelectedMachines)
 				else:
 					self.progressBar.setRange(0, self.__actionList.actionCount())
-					self.__actionList.executeAll(self.__lab, password)
+					self.__actionList.executeAll(self.__lab, password, selectedMachinesOnly=justSelectedMachines)
 			except Exception as e:
 				QMessageBox.critical(None, "Could not execute actions!", str(e))
 				self.__workerThread.exit(1)
+				self.progressBar.setVisible(False)
+				self.statusbar.showMessage("Action execution failed!", 10000)
 		self.__workerThread.started.connect(start)
 		self.__workerThread.start()
 		# Threading is buggy

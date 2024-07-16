@@ -22,17 +22,27 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import sys
 
+import PyQt5.QtCore
 from PyQt5.QtCore import *  # type: ignore
 from PyQt5.QtGui import *  # type: ignore
 from PyQt5.QtWidgets import *  # type: ignore
 
-def getExecutionOptions() -> tuple:
-	dialog = QDialog()
-	ed = ExecuteDialog()
-	ed.setupUi(dialog)
-	dialog.show()
-	print("Done")
+class ExecutionOptions:
+	def __init__(self) -> None:
+		self.execute : bool = False
+		self.allActions : bool = True
+		self.allMachines : bool = True
+		self.password : str | None = None
 
+def createExecutionOptions() -> ExecutionOptions:
+		dialog = QDialog()
+		ed = ExecuteDialog()
+		ed.setupUi(dialog)
+		eo = ExecutionOptions()
+		ed.buttonBox.accepted.connect(lambda : ed.createExecutionOptions(eo))
+		dialog.setWindowModality(PyQt5.QtCore.Qt.ApplicationModal)
+		dialog.exec()
+		return eo
 
 class ExecuteDialog(object):
 	def setupUi(self, executeDialog):
@@ -158,6 +168,13 @@ class ExecuteDialog(object):
 
 	def setupSlots(self):
 		self.previewPassword.clicked.connect(lambda : self.password.setEchoMode(QLineEdit.Normal if self.previewPassword.isChecked() else QLineEdit.Password))
+
+	def createExecutionOptions(self, execOptions : ExecutionOptions):
+		execOptions.execute = True
+		execOptions.password = self.password.text()
+		execOptions.allMachines = self.actionsOnAllMachines.isChecked()
+		execOptions.allActions = self.allActions.isChecked()
+
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
