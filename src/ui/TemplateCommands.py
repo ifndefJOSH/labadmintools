@@ -43,6 +43,7 @@ templateCommands = {
 }
 
 class PossibleCommandDialog(object):
+	callbacks = {}
 	def setupUi(self, Dialog):
 		if not Dialog.objectName():
 			Dialog.setObjectName(u"PossibleCommandDialog")
@@ -55,7 +56,6 @@ class PossibleCommandDialog(object):
 		self.verticalLayout.addWidget(self.commandsTree)
 		self.verticalLayout.addWidget(QLabel("Double Click on a command to add it"))
 
-
 		self.retranslateUi(Dialog)
 
 		QMetaObject.connectSlotsByName(Dialog)
@@ -63,13 +63,16 @@ class PossibleCommandDialog(object):
 
 	def retranslateUi(self, Dialog):
 		Dialog.setWindowTitle(QCoreApplication.translate("Template Commands", u"Template Commands", None))
-		___qtreewidgetitem = self.commandsTree.headerItem()
-		___qtreewidgetitem.setText(1, QCoreApplication.translate("Template Commands", u"Command", None));
-		___qtreewidgetitem.setText(0, QCoreApplication.translate("Template Commands", u"Description", None));
+		commandsHeaderItem = self.commandsTree.headerItem()
+		commandsHeaderItem.setText(1, QCoreApplication.translate("Template Commands", u"Command", None));
+		commandsHeaderItem.setText(0, QCoreApplication.translate("Template Commands", u"Description", None));
 		self.addTemplateCommands()
 	# retranslateUi
 
 	def addTemplateCommands(self):
+		def callback(widget : QTreeWidget, idx : int):
+			if id(widget) in PossibleCommandDialog.callbacks:
+				PossibleCommandDialog.callbacks[id(widget)]()
 		for category, commands in templateCommands.items():
 			catItem = QTreeWidgetItem()
 			catItem.setText(0, category)
