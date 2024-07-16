@@ -195,7 +195,8 @@ class MainWindow(object):
 		if QIcon.hasThemeIcon(iconThemeName):
 			selectAllIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			selectAllIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			selectAllIcon.addFile(os.path.join(".", "icons", "breeze", "edit-select-all.svg")
+						 , QSize(), QIcon.Normal, QIcon.Off)
 
 		self.selectAllMachines.setIcon(selectAllIcon)
 
@@ -208,7 +209,8 @@ class MainWindow(object):
 		if QIcon.hasThemeIcon(iconThemeName):
 			invertSelectionIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			invertSelectionIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			invertSelectionIcon.addFile(os.path.join(".", "icons", "breeze", "edit-select-invert.svg")
+						 , QSize(), QIcon.Normal, QIcon.Off)
 
 		self.invertMachineSelection.setIcon(invertSelectionIcon)
 
@@ -221,7 +223,8 @@ class MainWindow(object):
 		if QIcon.hasThemeIcon(iconThemeName):
 			deselectIcon = QIcon.fromTheme(iconThemeName)
 		else:
-			deselectIcon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+			deselectIcon.addFile(os.path.join(".", "icons", "breeze", "edit-select-none.svg")
+						 , QSize(), QIcon.Normal, QIcon.Off)
 
 		self.deselectAllMachines.setIcon(deselectIcon)
 
@@ -528,7 +531,16 @@ class MainWindow(object):
 		self.menuLogs.setTitle(QCoreApplication.translate("mainWindow", u"Logs", None))
 		# self.menuShow_Logs.setTitle(QCoreApplication.translate("mainWindow", u"Show Logs", None))
 		self.setupSlots()
+		self.flattenButtons(mainWindow)
+		self.flattenButtons(self.actionsTab)
+		self.flattenButtons(self.logsTab)
+		self.flattenButtons(self.tab)
 	# retranslateUi
+
+	def flattenButtons(self, mainWindow : QObject):
+		for c in mainWindow.children():
+			if isinstance(c, QToolButton):
+				c.setAutoRaise(True)
 
 	def addAction(self, actionType : int = Action.COMMAND):
 		assert(actionType >= 0 and actionType <= 2)
