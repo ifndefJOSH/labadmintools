@@ -14,8 +14,9 @@ class Command:
 templateCommands = {
 	"Package Updates":{
 		"Update Packages (Debian, Ubuntu...)":Command("apt update && apt -y upgrade", True)
-		, "Update Packages (CentOS 7)":Command("yum -y update --skip-broken", True)
-		, "Update Packages (Arch, Manjaro, Endeavor)":Command("pacman -Syu", True)
+		, "Update Packages (CentOS >7, RHEL, Fedora...)":Command("dnf -y update --skip-broken", True)
+		, "Update Packages (CentOS <=7, older RHEL...)":Command("yum -y update --skip-broken", True)
+		, "Update Packages (Arch, Manjaro, Endeavor...)":Command("pacman -Syu", True)
 	}
 	, "Performance Commands":{
 		"Current Memory Usage":Command("free -m")
