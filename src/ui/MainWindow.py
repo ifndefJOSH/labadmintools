@@ -32,6 +32,7 @@ from Actions import *
 from LabList import *
 from Logs import *
 from ui.ExecuteDialog import createExecutionOptions
+from ui.TemplateCommands import PossibleCommandDialog
 
 class MainWindow(object):
 	def setupUi(self, mainWindow):
@@ -94,6 +95,9 @@ class MainWindow(object):
 			deleteIcon = mainWindow.style().standardIcon(pixmapi)
 
 		self.actionDelete_Action.setIcon(deleteIcon)
+		self.actionTemplate_Action = QAction(mainWindow)
+		self.actionTemplate_Action.setCheckable(True)
+		self.actionDelete_Action.setObjectName(u"actionTemplate_Action")
 		# self.actionstdout_Logs = QAction(mainWindow)
 		# self.actionstdout_Logs.setObjectName(u"actionstdout_Logs")
 		# self.actionstdout_Logs.setCheckable(True)
@@ -240,8 +244,8 @@ class MainWindow(object):
 		self.tabWidget.addTab(self.tab, "")
 		self.actionsTab = QWidget()
 		self.actionsTab.setObjectName(u"actionsTab")
-		self.verticalLayout_3 = QVBoxLayout(self.actionsTab)
-		self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+		self.actionsVerticalLayout = QVBoxLayout(self.actionsTab)
+		self.actionsVerticalLayout.setObjectName(u"actionsVerticalLayout")
 		self.actionListWidget = QTableWidget(self.actionsTab)
 		if (self.actionListWidget.columnCount() < 5):
 			self.actionListWidget.setColumnCount(5)
@@ -257,7 +261,7 @@ class MainWindow(object):
 		self.actionListWidget.setHorizontalHeaderItem(4, __qtablewidgetitem6)
 		self.actionListWidget.setObjectName(u"actionListWidget")
 
-		self.verticalLayout_3.addWidget(self.actionListWidget)
+		self.actionsVerticalLayout.addWidget(self.actionListWidget)
 
 		self.actionsHorizontalLayout = QHBoxLayout()
 		self.actionsHorizontalLayout.setObjectName(u"actionsHorizontalLayout")
@@ -329,7 +333,7 @@ class MainWindow(object):
 		self.actionsHorizontalLayout.addItem(self.horizontalSpacer_3)
 
 
-		self.verticalLayout_3.addLayout(self.actionsHorizontalLayout)
+		self.actionsVerticalLayout.addLayout(self.actionsHorizontalLayout)
 
 		self.tabWidget.addTab(self.actionsTab, "")
 		self.logsTab = QWidget()
@@ -440,6 +444,7 @@ class MainWindow(object):
 		self.menuLab.addAction(self.actionExit)
 		self.menuScript.addAction(self.menuAdd_Action.menuAction())
 		self.menuScript.addAction(self.actionDelete_Action)
+		self.menuScript.addAction(self.actionTemplate_Action)
 		self.menuScript.addSeparator()
 		self.menuScript.addAction(self.actionRun)
 		self.menuScript.addSeparator()
@@ -473,6 +478,7 @@ class MainWindow(object):
 		self.actionSave_Lab_List.setText(QCoreApplication.translate("mainWindow", u"Save Lab List", None))
 		self.actionExit.setText(QCoreApplication.translate("mainWindow", u"Exit", None))
 		self.actionDelete_Action.setText(QCoreApplication.translate("mainWindow", u"Delete Action", None))
+		self.actionTemplate_Action.setText(QCoreApplication.translate("mainWindow", u"Show Template Actions", None))
 		# self.actionstdout_Logs.setText(QCoreApplication.translate("mainWindow", u"stdout Logs", None))
 		# self.actionstderr_Logs.setText(QCoreApplication.translate("mainWindow", u"stderr Logs", None))
 		self.actionScript_Action.setText(QCoreApplication.translate("mainWindow", u"Script Action", None))
@@ -542,7 +548,10 @@ class MainWindow(object):
 			if isinstance(c, QToolButton):
 				c.setAutoRaise(True)
 
-	def addAction(self, actionType : int = Action.COMMAND):
+	def addAction(self, actionType : int = Action.COMMAND
+			   , data : str | None = None
+			   , priv : bool = False
+			   , comment : str | None = None):
 		assert(actionType >= 0 and actionType <= 2)
 		newIdx = self.actionListWidget.rowCount()
 		self.actionListWidget.insertRow(newIdx)
@@ -554,8 +563,13 @@ class MainWindow(object):
 				FileCopyWidget() if actionType == Action.FILE_COPY else ShellScriptWidget()
 		dataLineWidget = QWidget()
 		dataLine.setupUi(dataLineWidget)
+		if data is not None:
+			dataLine.parseData(data)
 		commentLine = QLineEdit()
 		needsSudo = QCheckBox()
+		needsSudo.setChecked(priv)
+		if comment is not None:
+			commentLine.setText(comment)
 		ar = ActionRow(newIdx, actionTypeComboBox, dataLine, commentLine, needsSudo, selected, self.actionListWidget)
 		self.__actionList.addActionRow(ar)
 		# Add to UI
@@ -610,8 +624,6 @@ class MainWindow(object):
 	def runMyActions(self):
 		self.__workerThread = QThread()
 		self.__actionList.moveToThread(self.__workerThread)
-
-
 		# password, accept = QInputDialog.getText(None, "Password", "Password", QLineEdit.Password)
 		executionOptions = createExecutionOptions()
 		accept = executionOptions.execute
@@ -729,6 +741,12 @@ class MainWindow(object):
 		self.__lab = Lab(None, self.machineListWidget)
 		self.__allLogs = []
 		self.__mainThread = self.__mainWindow.thread()
+		self.__possibleCommandDialog = PossibleCommandDialog()
+		self.__possibleCommandDialogWidget = QWidget()
+		self.__possibleCommandDialog.setParentWindowCallback(self.addAction)
+		self.__possibleCommandDialog.setupUi(self.__possibleCommandDialogWidget)
+		self.actionsVerticalLayout.addWidget(self.__possibleCommandDialogWidget)
+		self.__possibleCommandDialogWidget.setVisible(False)
 
 		# Other stuff
 		self.actionExit.triggered.connect(lambda : sys.exit(0))
@@ -750,6 +768,7 @@ class MainWindow(object):
 		self.runActions.clicked.connect(self.runMyActions)
 		self.deleteSelectedActions.clicked.connect(lambda : self.__actionList.deleteSelected())
 		self.actionExport_Script.triggered.connect(self.exportShellScript)
+		self.actionTemplate_Action.triggered.connect(lambda : self.__possibleCommandDialogWidget.setVisible(self.actionTemplate_Action.isChecked()))
 
 		# Lab machine stuff
 		self.addMachine.clicked.connect(self.addLabMachine)

@@ -245,6 +245,7 @@ class ActionRow:
 
 	def changeDataLineWidget(self):
 		actionType = self.__actionTypeComboBox.currentIndex()
+		oldData = self.__dataLine.toData()
 		if actionType == Action.COMMAND:
 			newDataWidget = CommandWidget()
 		elif actionType == Action.FILE_COPY:
@@ -255,6 +256,7 @@ class ActionRow:
 			raise Exception("Invalid action type!")
 		w = QWidget()
 		newDataWidget.setupUi(w)
+		newDataWidget.parseData(oldData)
 		self.__dataLine = newDataWidget
 		self.__parent.setCellWidget(self.__idx, ActionRow.DATA_COLUMN_IDX, w)
 

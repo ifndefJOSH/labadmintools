@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from types import FunctionType
 from PyQt5.QtCore import *  # type: ignore
 from PyQt5.QtGui import *  # type: ignore
 from PyQt5.QtWidgets import *  # type: ignore
@@ -38,7 +39,8 @@ templateCommands = {
 		, "Enable HTTP":Command("firewall-cmd --zone=public --add-service=http --permanent", True)
 		, "Enable HTTPS":Command("firewall-cmd --zone=public --add-service=https --permanent", True)
 		, "Apply Firewall Changes":Command("firewall-cmd --reload", True)
-		, "Block IP Address":Command("firewall-cmd --zone=public --add-rich-rule='rule family=\"ipv4\" source address=\"x.x.x.x\" reject'", True)
+		, "Block IPv4 Address":Command("firewall-cmd --zone=public --add-rich-rule='rule family=\"ipv4\" source address=\"x.x.x.x\" reject'", True)
+		, "Block IPv6 Address":Command("firewall-cmd --zone=public --add-rich-rule='rule family=\"ipv6\" source address=\"ffff::ffff:ffff:ffff:ffff\" reject'", True)
 		, "Open a Port":Command("firewall-cmd --zone=public --add-port=PORT_NUMBER/tcp --permanent", True)
 		, "Close a Port":Command("firewall-cmd --zone=public --remove-port=PORT_NUMBER/tcp --permanent", True)
 	}
@@ -46,7 +48,13 @@ templateCommands = {
 }
 
 class PossibleCommandDialog(object):
-	callbacks = {}
+	commandMap = {}
+	def __init__(self) -> None:
+		self.parentWindowCallback = None
+
+	def setParentWindowCallback(self, parentWindowCallback):
+		self.parentWindowCallback = parentWindowCallback
+
 	def setupUi(self, Dialog):
 		if not Dialog.objectName():
 			Dialog.setObjectName(u"PossibleCommandDialog")
@@ -57,7 +65,7 @@ class PossibleCommandDialog(object):
 		self.commandsTree.setObjectName(u"commandsTree")
 
 		self.verticalLayout.addWidget(self.commandsTree)
-		self.verticalLayout.addWidget(QLabel("Double Click on a command to add it"))
+		self.verticalLayout.addWidget(QLabel("Template Commands: Double Click on a command to add it"))
 
 		self.retranslateUi(Dialog)
 
@@ -75,18 +83,27 @@ class PossibleCommandDialog(object):
 
 	def addTemplateCommands(self):
 		def callback(widget : QTreeWidget, idx : int):
-			if id(widget) in PossibleCommandDialog.callbacks:
-				PossibleCommandDialog.callbacks[id(widget)]()
+			print(id(widget))
+			if id(widget) in PossibleCommandDialog.commandMap:
+				description, command = PossibleCommandDialog.commandMap[id(widget)]
+				print(f"Adding command `{command.commandString}`")
+				if self.parentWindowCallback is not None:
+					self.parentWindowCallback(data=command.commandString, priv=command.privileged, comment=description)
+				# PossibleCommandDialog.commandMap[id(widget)]()
+		self.commandsTree.itemDoubleClicked.connect(callback)
 		for category, commands in templateCommands.items():
-			catItem = QTreeWidgetItem()
+			catItem = QTreeWidgetItem(self.commandsTree)
 			catItem.setText(0, category)
 			self.commandsTree.addTopLevelItem(catItem)
 			for description, command in commands.items():
-				cmdItem = QTreeWidgetItem()
+				cmdItem = QTreeWidgetItem(catItem)
 				cmdItem.setText(0, description)
 				cmdItem.setText(1, command.commandString)
 				cmdItem.setText(2, f"{'Yes' if command.privileged else 'No'}")
 				catItem.addChild(cmdItem)
+				print(id(cmdItem))
+				print(command.commandString)
+				PossibleCommandDialog.commandMap[id(cmdItem)] = (description, command)
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
