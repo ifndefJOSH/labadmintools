@@ -83,7 +83,6 @@ class PossibleCommandDialog(object):
 
 	def addTemplateCommands(self):
 		def callback(widget : QTreeWidget, idx : int):
-			print(id(widget))
 			if id(widget) in PossibleCommandDialog.commandMap:
 				description, command = PossibleCommandDialog.commandMap[id(widget)]
 				print(f"Adding command `{command.commandString}`")
@@ -101,8 +100,6 @@ class PossibleCommandDialog(object):
 				cmdItem.setText(1, command.commandString)
 				cmdItem.setText(2, f"{'Yes' if command.privileged else 'No'}")
 				catItem.addChild(cmdItem)
-				print(id(cmdItem))
-				print(command.commandString)
 				PossibleCommandDialog.commandMap[id(cmdItem)] = (description, command)
 
 if __name__ == "__main__":
