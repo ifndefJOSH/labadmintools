@@ -29,7 +29,7 @@ Note: UI uses default OS styling. These screenshots were taken on KDE plasma wit
 
 ![Action editor](./screenshots/actionEditor.png)
 
-![Action editor](./screenshots/actionEditor.png)
+![Action templates within editor](./screenshots/actionTemplates.png)
 
 ![Execution options](./screenshots/executionDialog.png)
 
