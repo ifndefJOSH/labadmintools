@@ -34,3 +34,21 @@ Note: UI uses default OS styling. These screenshots were taken on KDE plasma wit
 ![Execution options](./screenshots/executionDialog.png)
 
 ![Log Viewer](./screenshots/logsViewer.png)
+
+## FAQ
+
+Q: Do I need to install this software on each target machine?
+
+A: No. You just need SSH, preferably OpenSSH.
+
+Q: The UI freezes when a long command is running. Why?
+
+A: A separate thread dispatches commands, but blocks too much, which may cause the UI to appear laggy and slow. We're working on that.
+
+Q: Doesn't Ansible already do this? Why make this?
+
+A: Yes, Ansible has basically all and more functionality than this tool. The goal of this tool is to have a low barrier to entry; its GUI is designed for users which are not familiar with a CLI or config files, which Ansible requires users to be familiar with.
+
+Q: Do you support Windows target machines?
+
+A: Yes. As long as they are running OpenSSH.
