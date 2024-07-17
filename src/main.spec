@@ -2,13 +2,13 @@
 
 
 a = Analysis(
-    ['src/main.py'],
+    ['main.py'],
     pathex=[],
     binaries=[],
     datas=[
-		('src/icons/breeze/edit-select-all.svg', '.'),
-		('src/icons/breeze/edit-select-invert.svg', '.'),
-		('src/icons/breeze/edit-select-none.svg', '.'),
+		('icons/breeze/edit-select-all.svg', '.'),
+		('icons/breeze/edit-select-invert.svg', '.'),
+		('icons/breeze/edit-select-none.svg', '.'),
 	],
     hiddenimports=[],
     hookspath=[],
