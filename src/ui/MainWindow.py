@@ -23,6 +23,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import sys
 from threading import Thread
 from PyQt5 import *
+from PyQt5 import QtCore
 from PyQt5.QtCore import *  # type: ignore
 from PyQt5.QtGui import *  # type: ignore
 from PyQt5.QtWidgets import *
@@ -797,6 +798,7 @@ class MainWindow(object):
 		self.actionClear_Logs.triggered.connect(self.logTree.clear)
 		self.deleteSelectedLogs.clicked.connect(self.deleteLogSelection)
 
+		self.setupLabKeyEvents()
 		# Running Actions
 		self.__actionList.progress.connect(lambda i : self.progressBar.setValue(i))
 		self.__actionList.progressMessage.connect(lambda msg : self.statusbar.showMessage(msg))
@@ -812,4 +814,25 @@ class MainWindow(object):
 			self.__actionList.moveToThread(self.__mainThread)
 			self.statusbar.showMessage("Finished.")
 		self.__actionList.finished.connect(finished)
+
+	def setupLabKeyEvents(self):
+		self.machineListWidget.installEventFilter(
+			KeyPressFilter(self.machineListWidget, labOrActionList=self.__lab))
+		self.actionListWidget.installEventFilter(
+			KeyPressFilter(self.actionListWidget, labOrActionList=self.__actionList))
+
+class KeyPressFilter(QObject):
+	def __init__(self, parent : QObject | None = None, labOrActionList : ActionList | Lab | None = None) -> None:
+		super().__init__(parent)
+		self.__labOrActionList = labOrActionList
+
+	def eventFilter(self, obj : QObject, event : QKeyEvent):
+		if not isinstance(event, QKeyEvent) or event is None:
+			return False
+		assert(event is not None)
+		if event.key() == QtCore.Qt.Key_Delete:
+			self.__labOrActionList.deleteSelected()
+		elif QtCore.Qt.ControlModifier == event.modifiers() and event.key() == QtCore.Qt.Key_A:
+			self.__labOrActionList.selectAll()
+		return False
 
