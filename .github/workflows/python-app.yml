@@ -48,7 +48,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: labadmintools
-        path: ${{ pyinstLinux.outputs.output }}
+        path: ${{ steps.pyinstLinux.outputs.output }}
 
     - name: PyInstallerWindows
       id: pyinstWindows
@@ -58,6 +58,6 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: labadmintools.exe
-        path: ${{ pyinstWindows.outputs.output }}
+        path: ${{ steps.pyinstWindows.outputs.output }}
             
             
