@@ -474,8 +474,11 @@ class MainWindow(object):
 	def retranslateUi(self, mainWindow):
 		mainWindow.setWindowTitle(QCoreApplication.translate("mainWindow", u"Lab Admin Tools", None))
 		self.actionNew_Lab_List.setText(QCoreApplication.translate("mainWindow", u"New Lab List", None))
+		self.actionNew_Lab_List.setShortcut(QCoreApplication.translate("mainWindow", u"Ctrl+N", None))
 		self.actionOpen_Lab_List.setText(QCoreApplication.translate("mainWindow", u"Open Lab List", None))
+		self.actionOpen_Lab_List.setShortcut(QCoreApplication.translate("mainWindow", u"Ctrl+O", None))
 		self.actionSave_Lab_List.setText(QCoreApplication.translate("mainWindow", u"Save Lab List", None))
+		self.actionSave_Lab_List.setShortcut(QCoreApplication.translate("mainWindow", u"Ctrl+S", None))
 		self.actionExit.setText(QCoreApplication.translate("mainWindow", u"Exit", None))
 		self.actionDelete_Action.setText(QCoreApplication.translate("mainWindow", u"Delete Action", None))
 		self.actionTemplate_Action.setText(QCoreApplication.translate("mainWindow", u"Show Template Actions", None))
@@ -486,34 +489,38 @@ class MainWindow(object):
 		self.actionFile_Copy_Action.setText(QCoreApplication.translate("mainWindow", u"File Copy Action", None))
 		self.actionRun.setText(QCoreApplication.translate("mainWindow", u"Run", None))
 		self.actionSave_Action_List.setText(QCoreApplication.translate("mainWindow", u"Save Action List", None))
+		self.actionSave_Action_List.setShortcut(QCoreApplication.translate("mainWindow", u"Ctrl+Shift+S", None))
 		self.actionLoad_Action_List.setText(QCoreApplication.translate("mainWindow", u"Load Action List", None))
+		self.actionLoad_Action_List.setShortcut(QCoreApplication.translate("mainWindow", u"Ctrl+Shift+O", None))
+		self.actionTemplate_Action.setShortcut(QCoreApplication.translate("mainWindow", u"Ctrl+Shift+T", None))
 		self.actionExport_Script.setText(QCoreApplication.translate("mainWindow", u"Export Action List as Shell Script", None))
+		self.actionExport_Script.setShortcut(QCoreApplication.translate("mainWindow", u"Ctrl+Shift+E", None))
 		self.actionSave_Logs.setText(QCoreApplication.translate("mainWindow", u"Save Logs", None))
 		self.actionClear_Logs.setText(QCoreApplication.translate("mainWindow", u"Clear Logs", None))
-		___qtablewidgetitem8 = self.machineListWidget.horizontalHeaderItem(0)
-		___qtablewidgetitem8.setText(QCoreApplication.translate("mainWindow", u"Selected", None));
-		___qtablewidgetitem = self.machineListWidget.horizontalHeaderItem(1)
-		___qtablewidgetitem.setText(QCoreApplication.translate("mainWindow", u"Username", None));
-		___qtablewidgetitem1 = self.machineListWidget.horizontalHeaderItem(2)
-		___qtablewidgetitem1.setText(QCoreApplication.translate("mainWindow", u"IP Address", None));
-		___qtablewidgetitem2 = self.machineListWidget.horizontalHeaderItem(3)
-		___qtablewidgetitem2.setText(QCoreApplication.translate("mainWindow", u"Hostname", None));
+		selectedLogsHeaderItem = self.machineListWidget.horizontalHeaderItem(0)
+		selectedLogsHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Selected", None));
+		usernameHeaderItem = self.machineListWidget.horizontalHeaderItem(1)
+		usernameHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Username", None));
+		ipAddressHeaderItem = self.machineListWidget.horizontalHeaderItem(2)
+		ipAddressHeaderItem.setText(QCoreApplication.translate("mainWindow", u"IP Address", None));
+		hostnameHeaderItem = self.machineListWidget.horizontalHeaderItem(3)
+		hostnameHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Hostname", None));
 		self.addMachine.setText(QCoreApplication.translate("mainWindow", u"+", None))
 		self.deleteMachine.setText(QCoreApplication.translate("mainWindow", u"-", None))
 		self.selectAllMachines.setText(QCoreApplication.translate("mainWindow", u"...", None))
 		self.invertMachineSelection.setText(QCoreApplication.translate("mainWindow", u"...", None))
 		self.deselectAllMachines.setText(QCoreApplication.translate("mainWindow", u"...", None))
 		self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("mainWindow", u"Lab Machines", None))
-		___qtablewidgetitem7 = self.actionListWidget.horizontalHeaderItem(0)
-		___qtablewidgetitem7.setText(QCoreApplication.translate("mainWindow", u"Selected", None));
-		___qtablewidgetitem3 = self.actionListWidget.horizontalHeaderItem(1)
-		___qtablewidgetitem3.setText(QCoreApplication.translate("mainWindow", u"Type", None));
-		___qtablewidgetitem4 = self.actionListWidget.horizontalHeaderItem(2)
-		___qtablewidgetitem4.setText(QCoreApplication.translate("mainWindow", u"Data", None));
-		___qtablewidgetitem5 = self.actionListWidget.horizontalHeaderItem(3)
-		___qtablewidgetitem5.setText(QCoreApplication.translate("mainWindow", u"Comment", None));
-		___qtablewidgetitem6 = self.actionListWidget.horizontalHeaderItem(4)
-		___qtablewidgetitem6.setText(QCoreApplication.translate("mainWindow", u"Privileged", None));
+		actionTypeHeaderItem = self.actionListWidget.horizontalHeaderItem(0)
+		actionTypeHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Selected", None));
+		typeHeaderItem = self.actionListWidget.horizontalHeaderItem(1)
+		typeHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Type", None));
+		dataHeaderItem = self.actionListWidget.horizontalHeaderItem(2)
+		dataHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Data", None));
+		commentHeaderItem = self.actionListWidget.horizontalHeaderItem(3)
+		commentHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Comment", None));
+		privHeaderItem = self.actionListWidget.horizontalHeaderItem(4)
+		privHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Privileged", None));
 		self.newAction.setText(QCoreApplication.translate("mainWindow", u"...", None))
 		self.openActionList.setText(QCoreApplication.translate("mainWindow", u"...", None))
 		self.saveActionList.setText(QCoreApplication.translate("mainWindow", u"...", None))
@@ -522,10 +529,10 @@ class MainWindow(object):
 		self.deselectAllActions.setText(QCoreApplication.translate("mainWindow", u"...", None))
 		self.runActions.setText(QCoreApplication.translate("mainWindow", u"Run Action List", None))
 		self.tabWidget.setTabText(self.tabWidget.indexOf(self.actionsTab), QCoreApplication.translate("mainWindow", u"Actions", None))
-		___qtreewidgetitem = self.logTree.headerItem()
-		___qtreewidgetitem.setText(2, QCoreApplication.translate("mainWindow", u"Return Code", None));
-		___qtreewidgetitem.setText(1, QCoreApplication.translate("mainWindow", u"Status", None));
-		___qtreewidgetitem.setText(0, QCoreApplication.translate("mainWindow", u"Computer and Actions", None));
+		logsHeader = self.logTree.headerItem()
+		logsHeader.setText(2, QCoreApplication.translate("mainWindow", u"Return Code", None));
+		logsHeader.setText(1, QCoreApplication.translate("mainWindow", u"Status", None));
+		logsHeader.setText(0, QCoreApplication.translate("mainWindow", u"Computer and Actions", None));
 		self.selectAllMachineLogs.setText(QCoreApplication.translate("mainWindow", u"...", None))
 		self.invertMachineLogSelection.setText(QCoreApplication.translate("mainWindow", u"...", None))
 		self.deselectAllMachineLogs.setText(QCoreApplication.translate("mainWindow", u"...", None))
