@@ -39,22 +39,25 @@ jobs:
     #    pytest
 
     # Create executable files using pyinstaller
-    - name: PyInstaller Linux
+    - name: PyInstallerLinux
+      id: pyinstLinux
       uses: JackMcKew/pyinstaller-action-linux@0.1.4
       with:
         path: src
+        
     - uses: actions/upload-artifact@v2
       with:
-        name: name-of-artifact
-        path: src/dist/linux
+        name: labadmintools
+        path: ${{ pyinstLinux.outputs.output }}
 
-    - name: PyInstaller Windows
+    - name: PyInstallerWindows
+      id: pyinstWindows
       uses: JackMcKew/pyinstaller-action-windows@v0.1.2
       with:
         path: src
     - uses: actions/upload-artifact@v2
       with:
-        name: name-of-artifact
-        path: src/dist/windows
+        name: labadmintools.exe
+        path: ${{ pyinstWindows.outputs.output }}
             
             
