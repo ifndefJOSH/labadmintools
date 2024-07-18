@@ -22,11 +22,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import sys
 from threading import Thread
+
 from PyQt5 import *
 from PyQt5 import QtCore
 from PyQt5.QtCore import *  # type: ignore
 from PyQt5.QtGui import *  # type: ignore
 from PyQt5.QtWidgets import *
+
 from invoke.terminals import select  # type: ignore
 
 from Actions import *
@@ -34,15 +36,7 @@ from LabList import *
 from Logs import *
 from ui.ExecuteDialog import createExecutionOptions
 from ui.TemplateCommands import PossibleCommandDialog
-
-import resources
-
-def createIcon(iconThemeName : str) -> QIcon:
-	if QIcon.hasThemeIcon(iconThemeName):
-		icon = QIcon.fromTheme(iconThemeName)
-	else:
-		icon = QIcon(f":/icons/{iconThemeName}.svg")
-	return icon
+from ui.uiUtils import *
 
 class MainWindow(object):
 	def setupUi(self, mainWindow):

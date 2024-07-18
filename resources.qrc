@@ -15,5 +15,6 @@
 		<file alias='edit-select-invert.svg'>resources/icons/breeze/edit-select-invert.svg</file>
 		<file alias='edit-select-none.svg'>resources/icons/breeze/edit-select-none.svg</file>
 		<file alias='add.svg'>resources/icons/breeze/add.svg</file>
+		<file alias='view-visible.svg'>resources/icons/breeze/view-visible.svg</file>
 	</qresource>
 </RCC>

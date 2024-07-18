@@ -27,6 +27,8 @@ from PyQt5.QtCore import *  # type: ignore
 from PyQt5.QtGui import *  # type: ignore
 from PyQt5.QtWidgets import *  # type: ignore
 
+from ui.uiUtils import *
+
 class ExecutionOptions:
 	def __init__(self) -> None:
 		self.execute : bool = False
@@ -50,14 +52,9 @@ class ExecuteDialog(object):
 			executeDialog.setObjectName(u"executeDialog")
 		executeDialog.resize(380, 240)
 		executeDialog.setMaximumSize(QSize(380, 240))
-		icon = QIcon()
-		iconThemeName = u"media-playback-start"
-		if QIcon.hasThemeIcon(iconThemeName):
-			icon = QIcon.fromTheme(iconThemeName)
-		else:
-			icon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+		windowIcon = QIcon(":/app-icon.svg")
 
-		executeDialog.setWindowIcon(icon)
+		executeDialog.setWindowIcon(windowIcon)
 		self.formLayout = QFormLayout(executeDialog)
 		self.formLayout.setObjectName(u"formLayout")
 		self.machinesWidget = QWidget(executeDialog)
@@ -89,19 +86,13 @@ class ExecuteDialog(object):
 
 		self.previewPassword = QToolButton(executeDialog)
 		self.previewPassword.setObjectName(u"previewPassword")
-		icon1 = QIcon()
-		iconThemeName = u"view-visible"
-		if QIcon.hasThemeIcon(iconThemeName):
-			icon1 = QIcon.fromTheme(iconThemeName)
-		else:
-			icon1.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+		viewIcon = createIcon(u"view-visible")
 
-		self.previewPassword.setIcon(icon1)
+		self.previewPassword.setIcon(viewIcon)
 		self.previewPassword.setCheckable(True)
 		self.previewPassword.setAutoRaise(True)
 
 		self.horizontalLayout.addWidget(self.previewPassword)
-
 
 		self.formLayout.setLayout(5, QFormLayout.FieldRole, self.horizontalLayout)
 
@@ -144,7 +135,6 @@ class ExecuteDialog(object):
 		self.passwordLabel.setObjectName(u"passwordLabel")
 
 		self.formLayout.setWidget(5, QFormLayout.LabelRole, self.passwordLabel)
-
 
 		self.retranslateUi(executeDialog)
 		self.buttonBox.accepted.connect(executeDialog.accept)
