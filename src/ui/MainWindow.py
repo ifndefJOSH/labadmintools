@@ -35,6 +35,15 @@ from Logs import *
 from ui.ExecuteDialog import createExecutionOptions
 from ui.TemplateCommands import PossibleCommandDialog
 
+import resources
+
+def createIcon(iconThemeName : str) -> QIcon:
+	if QIcon.hasThemeIcon(iconThemeName):
+		icon = QIcon.fromTheme(iconThemeName)
+	else:
+		icon = QIcon(f":/{iconThemeName}.svg")
+	return icon
+
 class MainWindow(object):
 	def setupUi(self, mainWindow):
 		if not mainWindow.objectName():
@@ -43,57 +52,27 @@ class MainWindow(object):
 		mainWindow.resize(800, 639)
 		self.actionNew_Lab_List = QAction(mainWindow)
 		self.actionNew_Lab_List.setObjectName(u"actionNew_Lab_List")
-		docNewIcon = QIcon()
-		iconThemeName = u"document-new"
-		if QIcon.hasThemeIcon(iconThemeName):
-			docNewIcon = QIcon.fromTheme(iconThemeName)
-		else:
-			pixmapi = getattr(QStyle, "SP_FileIcon")
-			docNewIcon = mainWindow.style().standardIcon(pixmapi)
+		docNewIcon = createIcon(u"document-new")
 
 		self.actionNew_Lab_List.setIcon(docNewIcon)
 		self.actionOpen_Lab_List = QAction(mainWindow)
 		self.actionOpen_Lab_List.setObjectName(u"actionOpen_Lab_List")
-		openIcon = QIcon()
-		iconThemeName = u"document-open"
-		if QIcon.hasThemeIcon(iconThemeName):
-			openIcon = QIcon.fromTheme(iconThemeName)
-		else:
-			pixmapi = getattr(QStyle, "SP_DirOpenIcon")
-			openIcon = mainWindow.style().standardIcon(pixmapi)
+		openIcon = createIcon(u"document-open")
 
 		self.actionOpen_Lab_List.setIcon(openIcon)
 		self.actionSave_Lab_List = QAction(mainWindow)
 		self.actionSave_Lab_List.setObjectName(u"actionSave_Lab_List")
-		saveIcon = QIcon()
-		iconThemeName = u"document-save"
-		if QIcon.hasThemeIcon(iconThemeName):
-			saveIcon = QIcon.fromTheme(iconThemeName)
-		else:
-			pixmapi = getattr(QStyle, "SP_DialogSaveButton")
-			saveIcon = mainWindow.style().standardIcon(pixmapi)
+		saveIcon = createIcon(u"document-save")
 
 		self.actionSave_Lab_List.setIcon(saveIcon)
 		self.actionExit = QAction(mainWindow)
 		self.actionExit.setObjectName(u"actionExit")
-		exitIcon = QIcon()
-		iconThemeName = u"exit"
-		if QIcon.hasThemeIcon(iconThemeName):
-			exitIcon = QIcon.fromTheme(iconThemeName)
-		else:
-			pixmapi = getattr(QStyle, "SP_DialogCloseButton")
-			exitIcon = mainWindow.style().standardIcon(pixmapi)
+		exitIcon = createIcon(u"exit")
 
 		self.actionExit.setIcon(exitIcon)
 		self.actionDelete_Action = QAction(mainWindow)
 		self.actionDelete_Action.setObjectName(u"actionDelete_Action")
-		deleteIcon = QIcon()
-		iconThemeName = u"delete"
-		if QIcon.hasThemeIcon(iconThemeName):
-			deleteIcon = QIcon.fromTheme(iconThemeName)
-		else:
-			pixmapi = getattr(QStyle, "SP_DialogDiscardButton")
-			deleteIcon = mainWindow.style().standardIcon(pixmapi)
+		deleteIcon = createIcon(u"delete")
 
 		self.actionDelete_Action.setIcon(deleteIcon)
 		self.actionTemplate_Action = QAction(mainWindow)
@@ -115,13 +94,7 @@ class MainWindow(object):
 		self.actionFile_Copy_Action.setObjectName(u"actionFile_Copy_Action")
 		self.actionRun = QAction(mainWindow)
 		self.actionRun.setObjectName(u"actionRun")
-		startIcon = QIcon()
-		iconThemeName = u"media-playback-start"
-		if QIcon.hasThemeIcon(iconThemeName):
-			startIcon = QIcon.fromTheme(iconThemeName)
-		else:
-			pixmapi = getattr(QStyle, "SP_MediaPlay")
-			startIcon = mainWindow.style().standardIcon(pixmapi)
+		startIcon = createIcon(u"media-playback-start")
 
 		self.actionRun.setIcon(startIcon)
 		self.actionSave_Action_List = QAction(mainWindow)
@@ -169,12 +142,7 @@ class MainWindow(object):
 		self.horizontalLayout.setObjectName(u"horizontalLayout")
 		self.addMachine = QToolButton(self.tab)
 		self.addMachine.setObjectName(u"addMachine")
-		addIcon = QIcon()
-		iconThemeName = u"edit-add"
-		if QIcon.hasThemeIcon(iconThemeName):
-			addIcon = QIcon.fromTheme(iconThemeName)
-		else:
-			addIcon = docNewIcon
+		addIcon = createIcon(u"edit-add")
 
 		self.addMachine.setIcon(addIcon)
 
@@ -195,13 +163,7 @@ class MainWindow(object):
 
 		self.selectAllMachines = QToolButton(self.tab)
 		self.selectAllMachines.setObjectName(u"selectAllMachines")
-		selectAllIcon = QIcon()
-		iconThemeName = u"edit-select-all"
-		if QIcon.hasThemeIcon(iconThemeName):
-			selectAllIcon = QIcon.fromTheme(iconThemeName)
-		else:
-			selectAllIcon.addFile(os.path.join(".", "icons", "breeze", "edit-select-all.svg")
-						 , QSize(), QIcon.Normal, QIcon.Off)
+		selectAllIcon = createIcon(u"edit-select-all")
 
 		self.selectAllMachines.setIcon(selectAllIcon)
 
@@ -209,13 +171,7 @@ class MainWindow(object):
 
 		self.invertMachineSelection = QToolButton(self.tab)
 		self.invertMachineSelection.setObjectName(u"invertMachineSelection")
-		invertSelectionIcon = QIcon()
-		iconThemeName = u"edit-select-invert"
-		if QIcon.hasThemeIcon(iconThemeName):
-			invertSelectionIcon = QIcon.fromTheme(iconThemeName)
-		else:
-			invertSelectionIcon.addFile(os.path.join(".", "icons", "breeze", "edit-select-invert.svg")
-						 , QSize(), QIcon.Normal, QIcon.Off)
+		invertSelectionIcon = createIcon(u"edit-select-invert")
 
 		self.invertMachineSelection.setIcon(invertSelectionIcon)
 
@@ -223,13 +179,7 @@ class MainWindow(object):
 
 		self.deselectAllMachines = QToolButton(self.tab)
 		self.deselectAllMachines.setObjectName(u"deselectAllMachines")
-		deselectIcon = QIcon()
-		iconThemeName = u"edit-select-none"
-		if QIcon.hasThemeIcon(iconThemeName):
-			deselectIcon = QIcon.fromTheme(iconThemeName)
-		else:
-			deselectIcon.addFile(os.path.join(".", "icons", "breeze", "edit-select-none.svg")
-						 , QSize(), QIcon.Normal, QIcon.Off)
+		deselectIcon = createIcon(u"edit-select-none")
 
 		self.deselectAllMachines.setIcon(deselectIcon)
 
@@ -418,12 +368,7 @@ class MainWindow(object):
 		self.menuScript.setObjectName(u"menuScript")
 		self.menuAdd_Action = QMenu(self.menuScript)
 		self.menuAdd_Action.setObjectName(u"menuAdd_Action")
-		plusIcon = QIcon()
-		iconThemeName = u"add"
-		if QIcon.hasThemeIcon(iconThemeName):
-			plusIcon = QIcon.fromTheme(iconThemeName)
-		else:
-			plusIcon = addIcon
+		plusIcon = createIcon(u"add")
 
 		self.menuAdd_Action.setIcon(plusIcon)
 		self.menuLogs = QMenu(self.menubar)

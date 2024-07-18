@@ -1,0 +1,11 @@
+--2024-07-18 12:34:51--  https://develop.kde.org/themeicons/breeze/actions/32@2x/application-exit.svg
+Resolving develop.kde.org (develop.kde.org)... 85.10.198.55, 2a01:4f8:a0:600e::5
+Connecting to develop.kde.org (develop.kde.org)|85.10.198.55|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 421 [image/svg+xml]
+Saving to: ‘application-exit.svg’
+
+     0K                                                       100%  358M=0s
+
+2024-07-18 12:34:51 (358 MB/s) - ‘application-exit.svg’ saved [421/421]
+

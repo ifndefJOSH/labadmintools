@@ -1,0 +1,16 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+	<qresource prefix="icons">
+		<file alias='document-new.svg'>resources/icons/breeze/document-new.svg</file>
+		<file alias='document-open.svg'>resources/icons/breeze/document-open.svg</file>
+		<file alias='document-save.svg'>resources/icons/breeze/document-save.svg</file>
+		<file alias='exit.svg'>resources/icons/breeze/exit.svg</file>
+		<file alias='delete.svg'>resources/icons/breeze/delete.svg</file>
+		<file alias='media-playback-start.svg'>resources/icons/breeze/media-playback-start.svg</file>
+		<file alias='edit-add.svg'>resources/icons/breeze/edit-add.svg</file>
+		<file alias='edit-select-all.svg'>resources/icons/breeze/edit-select-all.svg</file>
+		<file alias='edit-select-invert.svg'>resources/icons/breeze/edit-select-invert.svg</file>
+		<file alias='edit-select-none.svg'>resources/icons/breeze/edit-select-none.svg</file>
+		<file alias='add.svg'>resources/icons/breeze/add.svg</file>
+	</qresource>
+</RCC>
