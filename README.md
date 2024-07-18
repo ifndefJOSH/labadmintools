@@ -1,3 +1,5 @@
+![Logo](resources/logo.svg)
+
 # Lab Admin Tools
 
 A graphical tool that makes use of `fabric` to execute commands, copy files, and administer networks of computers.
@@ -20,6 +22,14 @@ Action lists can also be exported as UNIX shell scripts, so this tool may be use
     + Logs show exit code, connection issues, etc
 - Export action list as POSIX Shell script
 - Template actions (common stuff that sysadmins would use frequency)
+
+## Before running
+
+Make sure to use `rcc` or `pyrcc5` to create a `resources.py` in the `src` directory from `resources.qrc`.
+
+```bash
+pyrcc5 resources.qrc >> src/resources.py
+```
 
 ## Screenshots
 

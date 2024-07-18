@@ -41,7 +41,7 @@ def createIcon(iconThemeName : str) -> QIcon:
 	if QIcon.hasThemeIcon(iconThemeName):
 		icon = QIcon.fromTheme(iconThemeName)
 	else:
-		icon = QIcon(f":/{iconThemeName}.svg")
+		icon = QIcon(f":/icons/{iconThemeName}.svg")
 	return icon
 
 class MainWindow(object):
@@ -49,6 +49,7 @@ class MainWindow(object):
 		if not mainWindow.objectName():
 			mainWindow.setObjectName(u"mainWindow")
 		self.__mainWindow = mainWindow
+		mainWindow.setWindowIcon(QIcon(":/app-icon.svg"))
 		mainWindow.resize(800, 639)
 		self.actionNew_Lab_List = QAction(mainWindow)
 		self.actionNew_Lab_List.setObjectName(u"actionNew_Lab_List")

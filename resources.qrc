@@ -1,5 +1,8 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
+	<qresource>
+		<file alias='app-icon.svg'>resources/app-icon.svg</file>
+	</qresource>
 	<qresource prefix="icons">
 		<file alias='document-new.svg'>resources/icons/breeze/document-new.svg</file>
 		<file alias='document-open.svg'>resources/icons/breeze/document-open.svg</file>
