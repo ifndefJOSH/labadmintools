@@ -23,6 +23,15 @@ Action lists can also be exported as UNIX shell scripts, so this tool may be use
 - Export action list as POSIX Shell script
 - Template actions (common stuff that sysadmins would use frequency)
 
+## Planned Features
+
+(roughly in the order of how soon they will be implemented
+
+- [ ] Packaged executable file downloads (the pyinstaller GitHub action is currently not working)
+- [ ] Cryptographic key authentication
+- [ ] Machine-wise authentication overrides
+- [ ] User-modifiable template actions
+
 ## Before running
 
 Make sure to use `rcc` or `pyrcc5` to create a `resources.py` in the `src` directory from `resources.qrc`.
