@@ -6,9 +6,6 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[
-		('icons/breeze/edit-select-all.svg', '.'),
-		('icons/breeze/edit-select-invert.svg', '.'),
-		('icons/breeze/edit-select-none.svg', '.'),
 	],
     hiddenimports=[],
     hookspath=[],

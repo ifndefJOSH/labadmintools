@@ -37,6 +37,7 @@ from Logs import *
 from ui.ExecuteDialog import createExecutionOptions
 from ui.TemplateCommands import PossibleCommandDialog
 from ui.uiUtils import *
+from ui.About import AboutDialog
 
 class MainWindow(object):
 	def setupUi(self, mainWindow):
@@ -368,6 +369,12 @@ class MainWindow(object):
 		self.menuAdd_Action.setIcon(plusIcon)
 		self.menuLogs = QMenu(self.menubar)
 		self.menuLogs.setObjectName(u"menuLogs")
+
+		self.menuAbout = QMenu(self.menubar)
+		self.actionAbout = QAction(self.menuAbout)
+		self.actionDocumentation = QAction(self.menuAbout)
+		self.menuAbout.addAction(self.actionDocumentation)
+		self.menuAbout.addAction(self.actionAbout)
 		# self.menuShow_Logs = QMenu(self.menuLogs)
 		# self.menuShow_Logs.setObjectName(u"menuShow_Logs")
 		mainWindow.setMenuBar(self.menubar)
@@ -378,6 +385,7 @@ class MainWindow(object):
 		self.menubar.addAction(self.menuLab.menuAction())
 		self.menubar.addAction(self.menuScript.menuAction())
 		self.menubar.addAction(self.menuLogs.menuAction())
+		self.menubar.addAction(self.menuAbout.menuAction())
 		self.menuLab.addAction(self.actionNew_Lab_List)
 		self.menuLab.addAction(self.actionOpen_Lab_List)
 		self.menuLab.addAction(self.actionSave_Lab_List)
@@ -483,6 +491,9 @@ class MainWindow(object):
 		self.menuScript.setTitle(QCoreApplication.translate("mainWindow", u"Actions", None))
 		self.menuAdd_Action.setTitle(QCoreApplication.translate("mainWindow", u"Add Action", None))
 		self.menuLogs.setTitle(QCoreApplication.translate("mainWindow", u"Logs", None))
+		self.menuAbout.setTitle(QCoreApplication.translate("mainWindow", u"About", None))
+		self.actionAbout.setText(QCoreApplication.translate("mainWindow", u"About", None))
+		self.actionDocumentation.setText(QCoreApplication.translate("mainWindow", u"Documentation", None))
 		# self.menuShow_Logs.setTitle(QCoreApplication.translate("mainWindow", u"Show Logs", None))
 		self.setupSlots()
 		self.flattenButtons(mainWindow)
@@ -490,6 +501,13 @@ class MainWindow(object):
 		self.flattenButtons(self.logsTab)
 		self.flattenButtons(self.tab)
 	# retranslateUi
+
+	def showAbout(self):
+		self.__abt = AboutDialog()
+		self.__d = QDialog(self.__mainWindow)
+		self.__abt.setupUi(self.__d)
+		self.__d.exec()
+
 
 	def flattenButtons(self, mainWindow : QObject):
 		for c in mainWindow.children():
@@ -737,6 +755,10 @@ class MainWindow(object):
 		self.deselectAllMachineLogs.clicked.connect(lambda : self.logSelection(deselectAll=True))
 		self.actionClear_Logs.triggered.connect(self.logTree.clear)
 		self.deleteSelectedLogs.clicked.connect(self.deleteLogSelection)
+
+		# Other
+		self.actionAbout.triggered.connect(self.showAbout)
+		self.actionDocumentation.triggered.connect(lambda : QDesktopServices.openUrl(QUrl("https://github.com/ifndefJOSH/labadmintools/blob/main/docs/introduction.md")))
 
 		self.setupLabKeyEvents()
 		# Running Actions
