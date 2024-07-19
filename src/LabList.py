@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
+from os import uname
 from types import FunctionType
 
 from PyQt5 import *
@@ -27,7 +28,9 @@ from PyQt5.QtGui import *  # type: ignore
 from PyQt5.QtWidgets import *  # type: ignore
 
 class LabComputer:
-	def __init__(self, username : str, ip : str, hostname : str) -> None:
+	AUTH_BY_PASSWORD = 0
+	AUTH_BY_KEY = 1
+	def __init__(self, username : str, ip : str, hostname : str, authMethod : int = AUTH_BY_PASSWORD) -> None:
 		self.username = username
 		self.ip = ip
 		self.hostname = hostname
@@ -37,6 +40,7 @@ class LabComputer:
 			self.hostname = None
 		if self.username == "":
 			self.username = None
+		self.authMethod = authMethod
 		assert(ip is not None or hostname is not None)
 		assert(username is not None)
 
@@ -54,17 +58,24 @@ class LabComputerRow:
 			  , selectedBox : QCheckBox
 			  , unameBox : QLineEdit
 			  , ipBox : QLineEdit
-			  , hostBox : QLineEdit) -> None:
+			  , hostBox : QLineEdit
+			  , authMethodBox : QComboBox) -> None:
 		self.__selectedBox = selectedBox
 		self.__unameBox = unameBox
 		self.__ipBox = ipBox
 		self.__hostBox = hostBox
+		self.__authMethodBox = authMethodBox
+		unameBox.setFrame(False)
+		ipBox.setFrame(False)
+		hostBox.setFrame(False)
+		authMethodBox.setFrame(False)
+
 
 	def widgets(self) -> tuple:
-		return self.__selectedBox, self.__unameBox, self.__ipBox, self.__hostBox
+		return self.__selectedBox, self.__unameBox, self.__ipBox, self.__hostBox, self.__authMethodBox
 
 	def asComputer(self) -> LabComputer:
-		return LabComputer(self.__unameBox.text(), self.__ipBox.text(), self.__hostBox.text())
+		return LabComputer(self.__unameBox.text(), self.__ipBox.text(), self.__hostBox.text(), self.__authMethodBox.currentIndex())
 
 	def selected(self) -> bool:
 		return self.__selectedBox.isChecked()
@@ -90,15 +101,18 @@ class Lab:
 			return
 		with open(filename, 'r') as f:
 			for line in f:
-				uname, ip, host = [s.strip() for s in line.split(",")]
+				uname, ip, host, authMethod = [s.strip() for s in line.split(",")]
 				unameBox = QLineEdit()
 				unameBox.setText(uname)
 				ipBox = QLineEdit()
 				ipBox.setText(ip)
 				hostBox = QLineEdit()
 				hostBox.setText(host)
+				authMethodBox = QComboBox()
+				authMethodBox.addItems(["Password", "Keypair"])
+				authMethodBox.setCurrentIndex(int(authMethod))
 				# The UI will have to use widgets() to add these to the table
-				self.__labComputerList.append(LabComputerRow(QCheckBox(), unameBox, ipBox, hostBox))
+				self.__labComputerList.append(LabComputerRow(QCheckBox(), unameBox, ipBox, hostBox, authMethodBox))
 		print(f"Loaded lab with {len(self.__labComputerList)} computers")
 
 	def save(self, filename : str | None = None):

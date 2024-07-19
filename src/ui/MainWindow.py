@@ -120,16 +120,18 @@ class MainWindow(object):
 		self.verticalLayout_2 = QVBoxLayout(self.tab)
 		self.verticalLayout_2.setObjectName(u"verticalLayout_2")
 		self.machineListWidget = QTableWidget(self.tab)
-		if (self.machineListWidget.columnCount() < 4):
-			self.machineListWidget.setColumnCount(4)
-		__qtablewidgetitem = QTableWidgetItem()
-		self.machineListWidget.setHorizontalHeaderItem(1, __qtablewidgetitem)
-		__qtablewidgetitem1 = QTableWidgetItem()
-		self.machineListWidget.setHorizontalHeaderItem(2, __qtablewidgetitem1)
-		__qtablewidgetitem2 = QTableWidgetItem()
-		self.machineListWidget.setHorizontalHeaderItem(3, __qtablewidgetitem2)
-		__qtablewidgetitem8 = QTableWidgetItem()
-		self.machineListWidget.setHorizontalHeaderItem(0, __qtablewidgetitem8)
+		if (self.machineListWidget.columnCount() < 5):
+			self.machineListWidget.setColumnCount(5)
+		usernameHeaderItem = QTableWidgetItem()
+		self.machineListWidget.setHorizontalHeaderItem(1, usernameHeaderItem)
+		ipHeaderItem = QTableWidgetItem()
+		self.machineListWidget.setHorizontalHeaderItem(2, ipHeaderItem)
+		hostnameHeaderItem = QTableWidgetItem()
+		self.machineListWidget.setHorizontalHeaderItem(3, hostnameHeaderItem)
+		selectedMachineHeaderItem = QTableWidgetItem()
+		self.machineListWidget.setHorizontalHeaderItem(0, selectedMachineHeaderItem)
+		authMethodHeaderItem = QTableWidgetItem()
+		self.machineListWidget.setHorizontalHeaderItem(4, authMethodHeaderItem)
 		self.machineListWidget.setObjectName(u"machineListWidget")
 
 		self.verticalLayout_2.addWidget(self.machineListWidget)
@@ -196,16 +198,16 @@ class MainWindow(object):
 		self.actionListWidget = QTableWidget(self.actionsTab)
 		if (self.actionListWidget.columnCount() < 5):
 			self.actionListWidget.setColumnCount(5)
-		__qtablewidgetitem7 = QTableWidgetItem()
-		self.actionListWidget.setHorizontalHeaderItem(0, __qtablewidgetitem7)
-		__qtablewidgetitem3 = QTableWidgetItem()
-		self.actionListWidget.setHorizontalHeaderItem(1, __qtablewidgetitem3)
-		__qtablewidgetitem4 = QTableWidgetItem()
-		self.actionListWidget.setHorizontalHeaderItem(2, __qtablewidgetitem4)
-		__qtablewidgetitem5 = QTableWidgetItem()
-		self.actionListWidget.setHorizontalHeaderItem(3, __qtablewidgetitem5)
-		__qtablewidgetitem6 = QTableWidgetItem()
-		self.actionListWidget.setHorizontalHeaderItem(4, __qtablewidgetitem6)
+		actionSelectedHeaderItem = QTableWidgetItem()
+		self.actionListWidget.setHorizontalHeaderItem(0, actionSelectedHeaderItem)
+		actionTypeHeaderItem = QTableWidgetItem()
+		self.actionListWidget.setHorizontalHeaderItem(1, actionTypeHeaderItem)
+		actionDataHeaderItem = QTableWidgetItem()
+		self.actionListWidget.setHorizontalHeaderItem(2, actionDataHeaderItem)
+		privilegedHeaderItem = QTableWidgetItem()
+		self.actionListWidget.setHorizontalHeaderItem(3, privilegedHeaderItem)
+		actionCommentHeaderItem = QTableWidgetItem()
+		self.actionListWidget.setHorizontalHeaderItem(4, actionCommentHeaderItem)
 		self.actionListWidget.setObjectName(u"actionListWidget")
 
 		self.actionsVerticalLayout.addWidget(self.actionListWidget)
@@ -287,12 +289,12 @@ class MainWindow(object):
 		self.logsTab.setObjectName(u"logsTab")
 		self.horizontalLayout_3 = QHBoxLayout(self.logsTab)
 		self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-		self.verticalLayout_4 = QVBoxLayout()
-		self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+		self.logVerticalLayout = QVBoxLayout()
+		self.logVerticalLayout.setObjectName(u"logVerticalLayout")
 		self.logTree = QTreeWidget(self.logsTab)
 		self.logTree.setObjectName(u"logTree")
 
-		self.verticalLayout_4.addWidget(self.logTree)
+		self.logVerticalLayout.addWidget(self.logTree)
 
 		self.horizontalLayout_2 = QHBoxLayout()
 		self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
@@ -337,10 +339,10 @@ class MainWindow(object):
 		self.horizontalLayout_2.addItem(self.horizontalSpacer_2)
 
 
-		self.verticalLayout_4.addLayout(self.horizontalLayout_2)
+		self.logVerticalLayout.addLayout(self.horizontalLayout_2)
 
 
-		self.horizontalLayout_3.addLayout(self.verticalLayout_4)
+		self.horizontalLayout_3.addLayout(self.logVerticalLayout)
 
 		self.logViewer = QTextEdit(self.logsTab)
 		self.logViewer.setObjectName(u"logViewer")
@@ -447,13 +449,15 @@ class MainWindow(object):
 		self.actionSave_Logs.setText(QCoreApplication.translate("mainWindow", u"Save Logs", None))
 		self.actionClear_Logs.setText(QCoreApplication.translate("mainWindow", u"Clear Logs", None))
 		selectedLogsHeaderItem = self.machineListWidget.horizontalHeaderItem(0)
-		selectedLogsHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Selected", None));
+		selectedLogsHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Selected", None))
 		usernameHeaderItem = self.machineListWidget.horizontalHeaderItem(1)
-		usernameHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Username", None));
+		usernameHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Username", None))
 		ipAddressHeaderItem = self.machineListWidget.horizontalHeaderItem(2)
-		ipAddressHeaderItem.setText(QCoreApplication.translate("mainWindow", u"IP Address", None));
+		ipAddressHeaderItem.setText(QCoreApplication.translate("mainWindow", u"IP Address", None))
 		hostnameHeaderItem = self.machineListWidget.horizontalHeaderItem(3)
-		hostnameHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Hostname", None));
+		hostnameHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Hostname", None))
+		authMethodHeaderItem = self.machineListWidget.horizontalHeaderItem(4)
+		authMethodHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Authentication Method", None))
 		self.addMachine.setText(QCoreApplication.translate("mainWindow", u"+", None))
 		self.deleteMachine.setText(QCoreApplication.translate("mainWindow", u"-", None))
 		self.selectAllMachines.setText(QCoreApplication.translate("mainWindow", u"...", None))
@@ -461,15 +465,15 @@ class MainWindow(object):
 		self.deselectAllMachines.setText(QCoreApplication.translate("mainWindow", u"...", None))
 		self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("mainWindow", u"Lab Machines", None))
 		actionTypeHeaderItem = self.actionListWidget.horizontalHeaderItem(0)
-		actionTypeHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Selected", None));
+		actionTypeHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Selected", None))
 		typeHeaderItem = self.actionListWidget.horizontalHeaderItem(1)
-		typeHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Type", None));
+		typeHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Type", None))
 		dataHeaderItem = self.actionListWidget.horizontalHeaderItem(2)
-		dataHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Data", None));
+		dataHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Data", None))
 		commentHeaderItem = self.actionListWidget.horizontalHeaderItem(3)
-		commentHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Comment", None));
+		commentHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Comment", None))
 		privHeaderItem = self.actionListWidget.horizontalHeaderItem(4)
-		privHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Privileged", None));
+		privHeaderItem.setText(QCoreApplication.translate("mainWindow", u"Privileged", None))
 		self.newAction.setText(QCoreApplication.translate("mainWindow", u"...", None))
 		self.openActionList.setText(QCoreApplication.translate("mainWindow", u"...", None))
 		self.saveActionList.setText(QCoreApplication.translate("mainWindow", u"...", None))
@@ -576,11 +580,14 @@ class MainWindow(object):
 		unameBox = QLineEdit()
 		ipBox = QLineEdit()
 		hostBox = QLineEdit()
-		row = LabComputerRow(selected, unameBox, ipBox, hostBox)
+		authMethodBox = QComboBox()
+		authMethodBox.addItems(["Password", "Keypair"])
+		row = LabComputerRow(selected, unameBox, ipBox, hostBox, authMethodBox)
 		self.machineListWidget.setCellWidget(newIdx, 0, selected)
 		self.machineListWidget.setCellWidget(newIdx, 1, unameBox)
 		self.machineListWidget.setCellWidget(newIdx, 2, ipBox)
 		self.machineListWidget.setCellWidget(newIdx, 3, hostBox)
+		self.machineListWidget.setCellWidget(newIdx, 4, authMethodBox)
 		self.__lab.addLabComputerRow(row)
 
 	def newLab(self):
@@ -643,13 +650,14 @@ class MainWindow(object):
 		self.__lab = Lab(filename[0], self.machineListWidget)
 		# This one we have to append widgets
 		for row in self.__lab.widgets():
-			selected, unameBox, ipBox, hostBox = row
+			selected, unameBox, ipBox, hostBox, authMethodBox = row
 			newIdx = self.machineListWidget.rowCount()
 			self.machineListWidget.insertRow(newIdx)
 			self.machineListWidget.setCellWidget(newIdx, 0, selected)
 			self.machineListWidget.setCellWidget(newIdx, 1, unameBox)
 			self.machineListWidget.setCellWidget(newIdx, 2, ipBox)
 			self.machineListWidget.setCellWidget(newIdx, 3, hostBox)
+			self.machineListWidget.setCellWidget(newIdx, 4, authMethodBox)
 		self.statusbar.showMessage(f"Opened lab list from f{filename[0]}")
 		self.tabWidget.setCurrentIndex(0)
 
