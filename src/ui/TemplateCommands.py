@@ -13,13 +13,14 @@ class Command:
 		self.privileged = priv
 		self.params = params
 
-	def parameterizedCommandString(self) -> str:
+	def parameterizedCommandString(self) -> tuple:
 		'''
 	Shows a Dialog for the user to fill out the parameters
 		'''
 		if len(self.params) == 0:
-			return self.commandString
+			return self.commandString, True
 		d = QDialog()
+		d.setWindowTitle("Command Parameters")
 		l = QFormLayout()
 		d.setLayout(l)
 		filledOutParamWidgets = []
@@ -31,6 +32,7 @@ class Command:
 			filledOutParamWidgets.append((placeholder, le))
 		closeButton = QPushButton("Finished")
 		def closeHandler():
+			global accepted
 			# Validate input
 			inputValid = True
 			missingParams = []
@@ -39,7 +41,7 @@ class Command:
 					inputValid = False
 					missingParams.append(param)
 			if inputValid:
-				d.close()
+				d.accept()
 			else:
 				QMessageBox.critical(None, "Missing info", "Please fill out all fields!\nMissing Fields:\n" + "\n".join(missingParams))
 		closeButton.clicked.connect(closeHandler)
@@ -47,7 +49,7 @@ class Command:
 		d.exec()
 		for placeholder, le in filledOutParamWidgets:
 			self.commandString = self.commandString.replace(placeholder, le.text())
-		return self.commandString
+		return self.commandString, d.result() == QDialog.DialogCode.Accepted
 
 
 templateCommands = {
@@ -141,7 +143,10 @@ class PossibleCommandDialog(object):
 				description, command = PossibleCommandDialog.commandMap[id(widget)]
 				print(f"Adding command `{command.commandString}`")
 				if self.parentWindowCallback is not None:
-					self.parentWindowCallback(data=command.parameterizedCommandString(), priv=command.privileged, comment=description)
+					cmdStr, accepted = command.parameterizedCommandString()
+					if not accepted:
+						return
+					self.parentWindowCallback(data=cmdStr, priv=command.privileged, comment=description)
 				# PossibleCommandDialog.commandMap[id(widget)]()
 		self.commandsTree.itemDoubleClicked.connect(callback)
 		for category, commands in templateCommands.items():
