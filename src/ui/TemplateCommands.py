@@ -8,9 +8,35 @@ from PyQt5.QtWidgets import *  # type: ignore
 import sys
 
 class Command:
-	def __init__(self, cmd : str, priv : bool = False):
+	def __init__(self, cmd : str, priv : bool = False, params : dict = {}):
 		self.commandString = cmd
 		self.privileged = priv
+		self.params = params
+
+	def parameterizedCommandString(self) -> str:
+		'''
+	Shows a Dialog for the user to fill out the parameters
+		'''
+		if len(self.params) == 0:
+			return self.commandString
+		d = QDialog()
+		l = QFormLayout()
+		d.setLayout(l)
+		filledOutParamWidgets = []
+		for placeholder, nameMaskPair in self.params.items():
+			name, mask = nameMaskPair
+			le = QLineEdit()
+			le.setInputMask(mask)
+			l.addRow(QLabel(name), le)
+			filledOutParamWidgets.append((placeholder, le))
+		closeButton = QPushButton("Finished")
+		closeButton.clicked.connect(d.close)
+		l.addWidget(closeButton)
+		d.exec()
+		for placeholder, le in filledOutParamWidgets:
+			self.commandString = self.commandString.replace(placeholder, le.text())
+		return self.commandString
+
 
 templateCommands = {
 	"Package Updates":{
@@ -27,11 +53,19 @@ templateCommands = {
 		, "Uptime":Command("uptime")
 	}
 	, "User Management Commands":{
-		"Message All Users":Command("wall \"Message\"")
-		, "Message Specific User":Command("echo \"Message\" | write USERNAME")
+		"Message All Users":Command("wall \"MESSAGE\""
+							  , False
+							  , {"MESSAGE":("Message", "")})
+		, "Message Specific User":Command("echo \"MESSAGE\" | write USERNAME"
+									, False
+									, {"USERNAME":("Target User", ""), "MESSAGE":("Message", "")})
 		, "Currently Logged-in Users":Command("who")
-		, "Add User":Command("useradd USERNAME", True)
-		, "Delete User":Command("userdel -fr USERNAME", True)
+		, "Add User":Command("useradd USERNAME"
+					   , True
+					   , {"USERNAME":("Name of User to Add", "")})
+		, "Delete User":Command("userdel -fr USERNAME"
+						  , True
+						  , {"USERNAME":("Name of User to Delete", "")})
 	}
 	, "Firewall Controls":{
 		"Start Firewall Service":Command("systemctl start firewalld", True)
@@ -39,10 +73,18 @@ templateCommands = {
 		, "Enable HTTP":Command("firewall-cmd --zone=public --add-service=http --permanent", True)
 		, "Enable HTTPS":Command("firewall-cmd --zone=public --add-service=https --permanent", True)
 		, "Apply Firewall Changes":Command("firewall-cmd --reload", True)
-		, "Block IPv4 Address":Command("firewall-cmd --zone=public --add-rich-rule='rule family=\"ipv4\" source address=\"x.x.x.x\" reject'", True)
-		, "Block IPv6 Address":Command("firewall-cmd --zone=public --add-rich-rule='rule family=\"ipv6\" source address=\"ffff::ffff:ffff:ffff:ffff\" reject'", True)
-		, "Open a Port":Command("firewall-cmd --zone=public --add-port=PORT_NUMBER/tcp --permanent", True)
-		, "Close a Port":Command("firewall-cmd --zone=public --remove-port=PORT_NUMBER/tcp --permanent", True)
+		, "Block IPv4 Address":Command("firewall-cmd --zone=public --add-rich-rule='rule family=\"ipv4\" source address=\"x.x.x.x\" reject'"
+								 , True
+								 , {"x.x.x.x":("IPv4 Address to Block", "999.999.999.999")})
+		, "Block IPv6 Address":Command("firewall-cmd --zone=public --add-rich-rule='rule family=\"ipv6\" source address=\"ffff:ffff:ffff:ffff:ffff\" reject'"
+								 , True
+								 , {"ffff:ffff:ffff:ffff:ffff":("IPv6 Address to Block", "HHHH:HHHH:HHHH:HHHH:HHHH")})
+		, "Open a Port":Command("firewall-cmd --zone=public --add-port=PORT_NUMBER/tcp --permanent"
+						  , True
+						  , {"PORT_NUMBER":("Number of port to open", "00000")})
+		, "Close a Port":Command("firewall-cmd --zone=public --remove-port=PORT_NUMBER/tcp --permanent"
+						   , True
+						   , {"PORT_NUMBER":("Number of port to close", "00000")})
 	}
 
 }
@@ -87,7 +129,7 @@ class PossibleCommandDialog(object):
 				description, command = PossibleCommandDialog.commandMap[id(widget)]
 				print(f"Adding command `{command.commandString}`")
 				if self.parentWindowCallback is not None:
-					self.parentWindowCallback(data=command.commandString, priv=command.privileged, comment=description)
+					self.parentWindowCallback(data=command.parameterizedCommandString(), priv=command.privileged, comment=description)
 				# PossibleCommandDialog.commandMap[id(widget)]()
 		self.commandsTree.itemDoubleClicked.connect(callback)
 		for category, commands in templateCommands.items():
