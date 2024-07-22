@@ -39,6 +39,10 @@ class DataLineWidget(object):
 	def parseData(self, data : str):
 		print("Warning! You do not want to call this! You should have overridden this")
 
+	def hasData(self) -> bool:
+		print("Warning! You do not want to call this! You should have overridden this")
+		return False
+
 	def deMarginLayout(self, layout : QHBoxLayout):
 		layout.setContentsMargins(0, 0, 0, 0)
 
@@ -106,6 +110,9 @@ class FileCopyWidget(DataLineWidget):
 		except ValueError:
 			self.sourcePathBox.setText(data)
 
+	def hasData(self) -> bool:
+		return self.sourcePathBox.text() != ""
+
 
 class ShellScriptWidget(DataLineWidget):
 	def setupUi(self, Form):
@@ -158,6 +165,9 @@ class ShellScriptWidget(DataLineWidget):
 	def parseData(self, data : str):
 		self.sourcePathBox.setText(data)
 
+	def hasData(self) -> bool:
+		return self.sourcePathBox.text() != ""
+
 class CommandWidget(DataLineWidget):
 	def setupUi(self, Form):
 		self.__form = Form
@@ -194,6 +204,9 @@ class CommandWidget(DataLineWidget):
 
 	def toData(self) -> str:
 		return self.commandBox.text()
+
+	def hasData(self) -> bool:
+		return self.commandBox.text() != ""
 
 	def parseData(self, data : str):
 		self.commandBox.setText(data)

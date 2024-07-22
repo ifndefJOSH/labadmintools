@@ -245,7 +245,9 @@ class ActionRow:
 
 	def changeDataLineWidget(self):
 		actionType = self.__actionTypeComboBox.currentIndex()
-		oldData = self.__dataLine.toData()
+		oldData = ""
+		if self.__dataLine.hasData():
+			oldData = self.__dataLine.toData()
 		if actionType == Action.COMMAND:
 			newDataWidget = CommandWidget()
 		elif actionType == Action.FILE_COPY:
