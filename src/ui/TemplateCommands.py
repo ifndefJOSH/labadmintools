@@ -30,7 +30,19 @@ class Command:
 			l.addRow(QLabel(name), le)
 			filledOutParamWidgets.append((placeholder, le))
 		closeButton = QPushButton("Finished")
-		closeButton.clicked.connect(d.close)
+		def closeHandler():
+			# Validate input
+			inputValid = True
+			missingParams = []
+			for param, le in filledOutParamWidgets:
+				if le.text() == "":
+					inputValid = False
+					missingParams.append(param)
+			if inputValid:
+				d.close()
+			else:
+				QMessageBox.critical(None, "Missing info", "Please fill out all fields!\nMissing Fields:\n" + "\n".join(missingParams))
+		closeButton.clicked.connect(closeHandler)
 		l.addWidget(closeButton)
 		d.exec()
 		for placeholder, le in filledOutParamWidgets:
