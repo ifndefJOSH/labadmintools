@@ -101,7 +101,12 @@ class Lab:
 			return
 		with open(filename, 'r') as f:
 			for line in f:
-				uname, ip, host, authMethod = [s.strip() for s in line.split(",")]
+				uname, ip, host, authMethod = ("", "", "", 1)
+				try:
+					uname, ip, host, authMethod = [s.strip() for s in line.split(",")]
+				except Exception:
+					print("Warning! Lab file line does not have authentication method! Defaulting to Keypair")
+					uname, ip, host = [s.strip() for s in line.split(",")]
 				unameBox = QLineEdit()
 				unameBox.setText(uname)
 				ipBox = QLineEdit()
