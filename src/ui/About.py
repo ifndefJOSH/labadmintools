@@ -25,7 +25,7 @@ class AboutDialog(object):
 		self.verticalLayout_4.setObjectName(u"verticalLayout_4")
 		self.aboutBox = QTextBrowser(self.aboutTab)
 		self.aboutBox.setObjectName(u"aboutBox")
-		self.aboutBox.setSource(QUrl(u"qrc:/about/about.html"))
+		self.aboutBox.setSource(QUrl(u"qrc:/about/about.md"))
 
 		self.verticalLayout_4.addWidget(self.aboutBox)
 
@@ -36,7 +36,7 @@ class AboutDialog(object):
 		self.verticalLayout_2.setObjectName(u"verticalLayout_2")
 		self.licenseBox = QTextBrowser(self.licenseTab)
 		self.licenseBox.setObjectName(u"licenseBox")
-		self.licenseBox.setSource(QUrl(u"qrc:/about/gplv3.html"))
+		self.licenseBox.setSource(QUrl(u"qrc:/about/gplv3.md"))
 		self.licenseBox.setOpenExternalLinks(True)
 
 		self.verticalLayout_2.addWidget(self.licenseBox)
@@ -48,7 +48,7 @@ class AboutDialog(object):
 		self.verticalLayout_3.setObjectName(u"verticalLayout_3")
 		self.acknowledgementsBox = QTextBrowser(self.ackTab)
 		self.acknowledgementsBox.setObjectName(u"acknowledgementsBox")
-		self.acknowledgementsBox.setSource(QUrl(u"qrc:/about/acknowledgement.html"))
+		self.acknowledgementsBox.setSource(QUrl(u"qrc:/about/acknowledgement.md"))
 
 		self.verticalLayout_3.addWidget(self.acknowledgementsBox)
 
@@ -59,7 +59,7 @@ class AboutDialog(object):
 		self.buttonBox = QDialogButtonBox(AboutDialog)
 		self.buttonBox.setObjectName(u"buttonBox")
 		self.buttonBox.setOrientation(Qt.Horizontal)
-		self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
+		self.buttonBox.setStandardButtons(QDialogButtonBox.Ok)
 
 		self.verticalLayout.addWidget(self.buttonBox)
 

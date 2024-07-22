@@ -19,8 +19,8 @@
 		<file alias='view-visible.svg'>resources/icons/breeze/view-visible.svg</file>
 	</qresource>
 	<qresource prefix="about">
-		<file alias='about.html'>resources/about-licenses/about.html</file>
-		<file alias='acknowledgement.html'>resources/about-licenses/acknowledgement.html</file>
-		<file alias='gplv3.html'>resources/about-licenses/gplv3.html</file>
+		<file alias='about.md'>resources/about-licenses/about.md</file>
+		<file alias='acknowledgement.md'>resources/about-licenses/acknowledgement.md</file>
+		<file alias='gplv3.md'>resources/about-licenses/gplv3.md</file>
 	</qresource>
 </RCC>
